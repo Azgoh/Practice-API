@@ -55,9 +55,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto request){
 
-        logger.info("Login attempt with identifier: {}", request.getIdentifier());
-        logger.info("Login attempt with password: {}", request.getPassword());
-
         try{
             String identifier = request.getIdentifier();
 

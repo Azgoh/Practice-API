@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 @Service
 @AllArgsConstructor
@@ -50,5 +51,9 @@ public class UserService {
 
     public List<UserEntity> getAllUsers(){
         return userRepository.findAll();
+    }
+
+    public Optional<UserEntity> findUserByUsernameOrEmail(String identifier){
+        return userRepository.findByUsernameOrEmail(identifier);
     }
 }

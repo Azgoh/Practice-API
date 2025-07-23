@@ -4,10 +4,11 @@ import com.example.PracticeApi.Entities.FileEntity;
 import com.example.PracticeApi.Repositories.FileRepository;
 import com.example.PracticeApi.Services.FileService;
 import com.example.PracticeApi.dtos.FileDto;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/files")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FileController {
 
     private final FileRepository fileRepository;
@@ -59,6 +60,13 @@ public class FileController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
 
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteFile(@PathVariable Long id){
+        fileService.deleteFileById(id);
+        return ResponseEntity.ok("File deleted successfully");
     }
 
 }

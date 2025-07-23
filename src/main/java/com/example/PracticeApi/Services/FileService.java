@@ -3,7 +3,8 @@ package com.example.PracticeApi.Services;
 import com.example.PracticeApi.Entities.FileEntity;
 import com.example.PracticeApi.Repositories.FileRepository;
 import com.example.PracticeApi.dtos.FileDto;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FileService {
 
     private final FileRepository fileRepository;
@@ -28,10 +29,20 @@ public class FileService {
     }
 
     public Optional<FileEntity> getFileById(Long id){
+        if(!fileRepository.existsById(id)){
+            throw new ResourceNotFoundException("File not found with id: " + id);
+        }
         return fileRepository.findById(id);
     }
 
     public List<FileEntity> getAllFiles(){
         return fileRepository.findAll();
+    }
+
+    public void deleteFileById(Long id){
+        if(!fileRepository.existsById(id)){
+            throw new ResourceNotFoundException("File not found with id: " + id);
+        }
+        fileRepository.deleteById(id);
     }
 }

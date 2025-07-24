@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +20,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private final EmailService emailService;
 
     public void registerUser(RegisterRequestDto request){
         if(userRepository.existsByUsername(request.getUsername())){
@@ -33,14 +36,31 @@ public class UserService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setEnabled(false);
         user.setRole(Role.ADMIN); //Change this
 
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
         userRepository.save(user);
+
+        String confirmationUrl = "http://localhost:8080/api/verify-email?token=" + token;
+        emailService.sendEmail(user.getEmail(), "Email Verification", "Click the " +
+                "link to verify your email: " + confirmationUrl);
+    }
+
+    public String validateVerificationToken(String token){
+        UserEntity user = userRepository.findByVerificationToken(token).orElse(null);
+        if(user == null){
+            return "Invalid";
+        }
+        user.setEnabled(true);
+        userRepository.save(user);
+        return "Valid";
     }
 
     public boolean loginUser(LoginRequestDto request){
         return userRepository.findByUsernameOrEmail(request.getIdentifier())
-                .filter(user -> passwordEncoder.matches(request.getPassword(), user.getPassword())).isPresent();
+                .filter(user -> user.isEnabled() && passwordEncoder.matches(request.getPassword(), user.getPassword())).isPresent();
     }
 
     public Optional<UserEntity> getUserById(Long id){

@@ -1,6 +1,7 @@
 package com.example.PracticeApi.Controllers;
 
 import com.example.PracticeApi.Entities.UserEntity;
+import com.example.PracticeApi.Exceptions.UserNotFoundException;
 import com.example.PracticeApi.Repositories.UserRepository;
 import com.example.PracticeApi.Security.JwtUtil;
 import com.example.PracticeApi.Services.UserService;
@@ -9,6 +10,7 @@ import com.example.PracticeApi.dtos.RegisterRequestDto;
 import com.example.PracticeApi.dtos.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
@@ -23,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -42,13 +46,26 @@ public class UserController {
     @Autowired
     JwtUtil jwtUtils;
 
+    @Autowired
+    public ApplicationEventPublisher eventPublisher;
+
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequestDto request){
         try{
             userService.registerUser(request);
-            return ResponseEntity.ok("User registered successfully");
+            return ResponseEntity.ok("Registration successful. Please check your email to verify your account.");
         } catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestParam("token") String token){
+        String result = userService.validateVerificationToken(token);
+        if("Valid".equals(result)){
+            return ResponseEntity.ok("Email verified successfully.");
+        }else{
+            return ResponseEntity.badRequest().body("Invalid or expired verification token");
         }
     }
 
@@ -56,6 +73,17 @@ public class UserController {
     public ResponseEntity<String> login(@RequestBody LoginRequestDto request){
 
         try{
+
+            Optional<UserEntity> optUser = userRepository.findByUsernameOrEmail(request.getIdentifier());
+            if(optUser.isEmpty()){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+            }
+
+            UserEntity user = optUser.get();
+            if(!user.isEnabled()){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email not verified");
+            }
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getIdentifier(),

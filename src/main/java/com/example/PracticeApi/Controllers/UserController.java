@@ -1,7 +1,6 @@
 package com.example.PracticeApi.Controllers;
 
 import com.example.PracticeApi.Entities.UserEntity;
-import com.example.PracticeApi.Exceptions.UserNotFoundException;
 import com.example.PracticeApi.Repositories.UserRepository;
 import com.example.PracticeApi.Security.JwtUtil;
 import com.example.PracticeApi.Services.UserService;
@@ -10,7 +9,6 @@ import com.example.PracticeApi.dtos.RegisterRequestDto;
 import com.example.PracticeApi.dtos.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,8 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +38,7 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    PasswordEncoder encoder;
-    @Autowired
     JwtUtil jwtUtils;
-
-    @Autowired
-    public ApplicationEventPublisher eventPublisher;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequestDto request){

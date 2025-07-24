@@ -1,7 +1,6 @@
 package com.example.PracticeApi.Controllers;
 
 import com.example.PracticeApi.Entities.FileEntity;
-import com.example.PracticeApi.Repositories.FileRepository;
 import com.example.PracticeApi.Services.FileService;
 import com.example.PracticeApi.dtos.FileDto;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +17,6 @@ import java.util.List;
 @RequestMapping("/api/files")
 @RequiredArgsConstructor
 public class FileController {
-
-    private final FileRepository fileRepository;
     private final FileService fileService;
 
     @GetMapping

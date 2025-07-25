@@ -29,7 +29,7 @@ public class RatingService {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Optional<RatingEntity> existingRatingOpt = ratingRepository.findByProfessionalAndUser(professional, user);
+        Optional<RatingEntity> existingRatingOpt = ratingRepository.findByProfessionalAndReviewer(professional, user);
 
         RatingEntity rating;
         if(existingRatingOpt.isPresent()){

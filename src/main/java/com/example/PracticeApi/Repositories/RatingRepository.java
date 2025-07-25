@@ -12,6 +12,6 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Long> {
 
     List<RatingEntity> findByProfessional(ProfessionalEntity professional);
 
-    Optional<RatingEntity> findByProfessionalAndUser(ProfessionalEntity professional, UserEntity user);
+    Optional<RatingEntity> findByProfessionalAndReviewer(ProfessionalEntity professional, UserEntity user);
 
 }

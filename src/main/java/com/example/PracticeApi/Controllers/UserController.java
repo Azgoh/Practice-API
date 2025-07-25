@@ -100,7 +100,8 @@ public class UserController {
                 .map(user -> new UserDto(user.getId(),
                         user.getUsername(),
                         user.getEmail(),
-                        user.getRole()))
+                        user.getRole(),
+                        user.isEnabled()) )
                 .toList();
 
         return ResponseEntity.ok(usersDto);
@@ -113,7 +114,8 @@ public class UserController {
                 .map(user -> new UserDto(user.getId(),
                         user.getUsername(),
                         user.getEmail(),
-                        user.getRole()))
+                        user.getRole(),
+                        user.isEnabled()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

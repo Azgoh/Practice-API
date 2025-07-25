@@ -2,6 +2,7 @@ package com.example.PracticeApi.Entities;
 
 
 import com.example.PracticeApi.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class UserEntity {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -30,5 +32,10 @@ public class UserEntity {
     @Column(nullable = false)
     private boolean enabled;
 
+    @JsonIgnore
     private String verificationToken;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private ProfessionalEntity professionalEntity;
 }

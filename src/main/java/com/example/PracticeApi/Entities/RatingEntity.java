@@ -1,5 +1,6 @@
 package com.example.PracticeApi.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,10 +19,12 @@ public class RatingEntity {
 
     @ManyToOne
     @JoinColumn(name = "professional_id", nullable = false)
+    @JsonBackReference(value = "professional-rating")
     private ProfessionalEntity professional;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @JsonBackReference(value = "user-rating")
+    private UserEntity reviewer;
     private int score;
     private String review;
     private LocalDateTime timestamp;

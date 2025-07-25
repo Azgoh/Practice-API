@@ -1,5 +1,6 @@
 package com.example.PracticeApi.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,5 +33,6 @@ public class ProfessionalEntity {
     private UserEntity user;
 
     @OneToMany(mappedBy = "professional", cascade = CascadeType.ALL)
-    private List<RatingEntity> ratings;
+    @JsonManagedReference(value = "professional-rating")
+    private List<RatingEntity> ratingsReceived;
 }

@@ -3,8 +3,11 @@ package com.example.PracticeApi.Entities;
 
 import com.example.PracticeApi.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -34,6 +37,10 @@ public class UserEntity {
 
     @JsonIgnore
     private String verificationToken;
+
+    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "user-rating")
+    private List<RatingEntity> ratingsGiven;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore

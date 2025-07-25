@@ -37,7 +37,7 @@ public class RatingService {
         } else {
             rating = new RatingEntity();
             rating.setProfessional(professional);
-            rating.setUser(user);
+            rating.setReviewer(user);
         }
         rating.setScore(score);
         rating.setReview(review);

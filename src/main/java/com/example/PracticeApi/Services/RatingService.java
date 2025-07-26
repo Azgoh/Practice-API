@@ -3,6 +3,7 @@ package com.example.PracticeApi.Services;
 import com.example.PracticeApi.Entities.ProfessionalEntity;
 import com.example.PracticeApi.Entities.RatingEntity;
 import com.example.PracticeApi.Entities.UserEntity;
+import com.example.PracticeApi.Exceptions.ResourceNotFoundException;
 import com.example.PracticeApi.Repositories.ProfessionalRepository;
 import com.example.PracticeApi.Repositories.RatingRepository;
 import com.example.PracticeApi.Repositories.UserRepository;
@@ -24,10 +25,10 @@ public class RatingService {
 
     public RatingEntity addOrUpdateRating(Long professionalId, Long userId, int score, String review){
         ProfessionalEntity professional = professionalRepository.findById(professionalId)
-                .orElseThrow(() -> new RuntimeException("Professional not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
 
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Optional<RatingEntity> existingRatingOpt = ratingRepository.findByProfessionalAndReviewer(professional, user);
 
@@ -47,7 +48,7 @@ public class RatingService {
 
     public List<RatingEntity> getRatingsForProfessional(Long professionalId){
         ProfessionalEntity professional = professionalRepository.findById(professionalId)
-                .orElseThrow(() -> new RuntimeException("Professional not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
         return ratingRepository.findByProfessional(professional);
     }
 

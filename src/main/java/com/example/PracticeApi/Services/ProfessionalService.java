@@ -2,6 +2,7 @@ package com.example.PracticeApi.Services;
 
 import com.example.PracticeApi.Entities.ProfessionalEntity;
 import com.example.PracticeApi.Entities.UserEntity;
+import com.example.PracticeApi.Exceptions.AlreadyExistsException;
 import com.example.PracticeApi.Exceptions.ResourceNotFoundException;
 import com.example.PracticeApi.Repositories.ProfessionalRepository;
 import com.example.PracticeApi.Repositories.UserRepository;
@@ -25,7 +26,7 @@ public class ProfessionalService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if(professionalRepository.existsByUser(user)){
-            throw new RuntimeException("Professional profile already exists for user");
+            throw new AlreadyExistsException("Professional profile already exists for user");
         }
 
         ProfessionalEntity professional = new ProfessionalEntity();

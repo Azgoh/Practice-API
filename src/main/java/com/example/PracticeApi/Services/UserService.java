@@ -1,6 +1,7 @@
 package com.example.PracticeApi.Services;
 
 import com.example.PracticeApi.Entities.UserEntity;
+import com.example.PracticeApi.Exceptions.AlreadyExistsException;
 import com.example.PracticeApi.Exceptions.ResourceNotFoundException;
 import com.example.PracticeApi.Repositories.UserRepository;
 import com.example.PracticeApi.Security.JwtUtil;
@@ -32,11 +33,11 @@ public class UserService {
 
     public void registerUser(RegisterRequestDto request){
         if(userRepository.existsByUsername(request.getUsername())){
-            throw new RuntimeException("Username exists");
+            throw new AlreadyExistsException("Username exists");
         }
 
         if(userRepository.existsByEmail((request.getEmail()))){
-            throw new RuntimeException("Email already registered");
+            throw new AlreadyExistsException("Email already registered");
         }
 
         UserEntity user = new UserEntity();

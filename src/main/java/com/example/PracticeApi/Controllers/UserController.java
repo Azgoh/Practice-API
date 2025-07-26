@@ -24,12 +24,8 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequestDto request){
-        try{
-            userService.registerUser(request);
-            return ResponseEntity.ok("Registration successful. Please check your email to verify your account.");
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        userService.registerUser(request);
+        return ResponseEntity.ok("Registration successful. Please check your email to verify your account.");
     }
 
     @GetMapping("/verify-email")

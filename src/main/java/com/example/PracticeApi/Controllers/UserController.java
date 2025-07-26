@@ -1,28 +1,18 @@
 package com.example.PracticeApi.Controllers;
 
 import com.example.PracticeApi.Entities.UserEntity;
-import com.example.PracticeApi.Repositories.UserRepository;
-import com.example.PracticeApi.Security.JwtUtil;
 import com.example.PracticeApi.Services.UserService;
 import com.example.PracticeApi.dtos.LoginRequestDto;
 import com.example.PracticeApi.dtos.RegisterRequestDto;
 import com.example.PracticeApi.dtos.UserDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -31,14 +21,6 @@ public class UserController {
 
     private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
-
-    @Autowired
-    AuthenticationManager authenticationManager;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    JwtUtil jwtUtils;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequestDto request){
@@ -61,35 +43,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto request){
-
-        try{
-
-            Optional<UserEntity> optUser = userRepository.findByUsernameOrEmail(request.getIdentifier());
-            if(optUser.isEmpty()){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-            }
-
-            UserEntity user = optUser.get();
-            if(!user.isEnabled()){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email not verified");
-            }
-
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getIdentifier(),
-                            request.getPassword()
-                    )
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String username = authentication.getName();
-            String token = jwtUtils.generateToken(username);
-            return ResponseEntity.ok(token);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-        }
-
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto request){
+        String token = userService.loginUser(request);
+        return ResponseEntity.ok(token);
     }
 
     @GetMapping("/users")

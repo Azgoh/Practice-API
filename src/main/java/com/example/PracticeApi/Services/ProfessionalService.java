@@ -2,6 +2,7 @@ package com.example.PracticeApi.Services;
 
 import com.example.PracticeApi.Entities.ProfessionalEntity;
 import com.example.PracticeApi.Entities.UserEntity;
+import com.example.PracticeApi.Exceptions.ResourceNotFoundException;
 import com.example.PracticeApi.Repositories.ProfessionalRepository;
 import com.example.PracticeApi.Repositories.UserRepository;
 import com.example.PracticeApi.dtos.ProfessionalRegisterDto;
@@ -21,7 +22,7 @@ public class ProfessionalService {
     public ProfessionalEntity registerProfessional(ProfessionalRegisterDto dto){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByUsernameOrEmail(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if(professionalRepository.existsByUser(user)){
             throw new RuntimeException("Professional profile already exists for user");
@@ -42,8 +43,8 @@ public class ProfessionalService {
     }
 
     public ProfessionalEntity getProfessionalById(Long id){
-        return professionalRepository.findByUserId(id)
-                .orElseThrow(() -> new RuntimeException("Professional not found"));
+        return professionalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
     }
 
     public List<ProfessionalEntity> getAllProfessionals(){

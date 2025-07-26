@@ -40,8 +40,7 @@ public class FileController {
 
     @GetMapping("/download/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable Long id) throws Exception{
-        FileEntity fileEntity = fileService.getFileById(id)
-                .orElseThrow(() -> new RuntimeException("File not found with id " + id));
+        FileEntity fileEntity = fileService.getFileById(id);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(fileEntity.getContentType()))
@@ -51,11 +50,15 @@ public class FileController {
 
     @GetMapping("/{id}")
     public ResponseEntity<FileDto> getFileById(@PathVariable Long id){
+        FileEntity file = fileService.getFileById(id);
+        FileDto dto = new FileDto(
+                file.getId(),
+                file.getFilename(),
+                file.getContentType(),
+                (long) file.getData().length
+        );
 
-        return fileService.getFileById(id)
-                .map(file -> new FileDto(file.getId(), file.getFilename(), file.getContentType(), (long) file.getData().length))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(dto);
 
     }
 

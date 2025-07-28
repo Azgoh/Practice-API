@@ -49,11 +49,7 @@ public class UserController {
 
         List<UserEntity> users = userService.getAllUsers();
         List<UserDto> usersDto = users.stream()
-                .map(user -> new UserDto(user.getId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getRole(),
-                        user.isEnabled()) )
+                .map(user -> userService.toDto(user))
                 .toList();
 
         return ResponseEntity.ok(usersDto);
@@ -63,11 +59,7 @@ public class UserController {
     public ResponseEntity<UserDto> getUserById(@PathVariable long id){
 
         return userService.getUserById(id)
-                .map(user -> new UserDto(user.getId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getRole(),
-                        user.isEnabled()))
+                .map(user -> userService.toDto(user))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

@@ -7,6 +7,7 @@ import com.example.PracticeApi.Repositories.UserRepository;
 import com.example.PracticeApi.Security.JwtUtil;
 import com.example.PracticeApi.dtos.LoginRequestDto;
 import com.example.PracticeApi.dtos.RegisterRequestDto;
+import com.example.PracticeApi.dtos.UserDto;
 import com.example.PracticeApi.enums.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -82,8 +84,19 @@ public class UserService {
         return jwtUtils.generateToken(authentication.getName());
     }
 
+    public UserEntity getAuthenticatedUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String identifier = auth.getName();
+        return userRepository.findByUsernameOrEmail(identifier)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
     public Optional<UserEntity> getUserById(Long id){
-        return userRepository.findById(id);
+        Optional<UserEntity> optUser = userRepository.findById(id);
+        if(optUser.isEmpty()){
+            throw new ResourceNotFoundException("User not found");
+        }
+        return optUser;
     }
     public List<UserEntity> getAllUsers(){
         return userRepository.findAll();
@@ -95,6 +108,14 @@ public class UserService {
 
     public void deleteAllUsers() {
         userRepository.deleteAll();
+    }
+
+    public UserDto toDto(UserEntity user){
+        return new UserDto(user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole(),
+                user.isEnabled());
     }
 
 }

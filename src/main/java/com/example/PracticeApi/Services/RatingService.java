@@ -6,7 +6,7 @@ import com.example.PracticeApi.Entities.UserEntity;
 import com.example.PracticeApi.Exceptions.ResourceNotFoundException;
 import com.example.PracticeApi.Repositories.ProfessionalRepository;
 import com.example.PracticeApi.Repositories.RatingRepository;
-import com.example.PracticeApi.Repositories.UserRepository;
+import com.example.PracticeApi.dtos.RatingDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +21,18 @@ public class RatingService {
 
     private final RatingRepository ratingRepository;
     private final ProfessionalRepository professionalRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public RatingEntity addOrUpdateRating(Long professionalId, Long userId, int score, String review){
+    public RatingEntity addOrUpdateRating(Long professionalId, int score, String review){
+
+        if(score < 1 || score > 5){
+            throw new IllegalArgumentException("Score must be between 1 and 5");
+        }
+
         ProfessionalEntity professional = professionalRepository.findById(professionalId)
                 .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
 
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        UserEntity user = userService.getAuthenticatedUser();
 
         Optional<RatingEntity> existingRatingOpt = ratingRepository.findByProfessionalAndReviewer(professional, user);
 
@@ -56,5 +60,14 @@ public class RatingService {
         List<RatingEntity> ratings = getRatingsForProfessional(professionalId);
         OptionalDouble average = ratings.stream().mapToInt(RatingEntity::getScore).average();
         return average.orElse(0.0);
+    }
+
+    public RatingDto toDto(RatingEntity ratingEntity){
+        return new RatingDto(ratingEntity.getId(),
+                ratingEntity.getProfessional().getId(),
+                ratingEntity.getReviewer().getId(),
+                ratingEntity.getScore(),
+                ratingEntity.getReview(),
+                ratingEntity.getTimestamp());
     }
 }

@@ -4,6 +4,7 @@ import com.example.PracticeApi.Entities.RatingEntity;
 import com.example.PracticeApi.Services.RatingService;
 import com.example.PracticeApi.dtos.RatingDto;
 import com.example.PracticeApi.dtos.RatingRequestDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Tag(name = "Rating Controller", description = "Endpoints for rating management")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ratings")

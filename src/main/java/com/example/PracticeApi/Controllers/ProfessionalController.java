@@ -3,6 +3,7 @@ package com.example.PracticeApi.Controllers;
 import com.example.PracticeApi.Entities.ProfessionalEntity;
 import com.example.PracticeApi.Services.ProfessionalService;
 import com.example.PracticeApi.dtos.ProfessionalRegisterDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Professional Controller", description = "Endpoints for managing professionals")
 @RestController
 @RequestMapping("/api/professionals")
 @RequiredArgsConstructor

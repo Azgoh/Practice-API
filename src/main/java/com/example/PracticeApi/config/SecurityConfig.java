@@ -1,9 +1,12 @@
 package com.example.PracticeApi.config;
 
-import com.example.PracticeApi.security.AuthEntryPointJwt;
-import com.example.PracticeApi.security.AuthTokenFilter;
+import com.example.PracticeApi.component.AuthEntryPointJwt;
+import com.example.PracticeApi.component.AuthTokenFilter;
+import com.example.PracticeApi.component.OAuth2AuthenticationSuccessHandler;
+import com.example.PracticeApi.component.OAuth2FailureHandler;
+import com.example.PracticeApi.service.CustomOAuth2UserService;
 import com.example.PracticeApi.service.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,19 +14,24 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    CustomUserDetailsService userDetailsService;
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private final CustomUserDetailsService userDetailsService;
+
+    private final AuthEntryPointJwt unauthorizedHandler;
+
+    private final CustomOAuth2UserService customOAuth2UserService;
+
+    private final OAuth2AuthenticationSuccessHandler successHandler;
+
+    private final OAuth2FailureHandler failureHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter(){
@@ -35,11 +43,6 @@ public class SecurityConfig {
             AuthenticationConfiguration authenticationConfiguration
     ) throws Exception{
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -58,7 +61,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.permitAll())
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .oidcUserService(customOAuth2UserService)
+                        )
+                        .successHandler(successHandler)
+                        .failureHandler(failureHandler)
+                )
+                .formLogin(form -> form.disable())
                 .logout(logout -> logout.permitAll());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

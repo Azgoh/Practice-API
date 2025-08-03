@@ -1,6 +1,7 @@
 package com.example.PracticeApi.entity;
 
 
+import com.example.PracticeApi.enumeration.AuthProvider;
 import com.example.PracticeApi.enumeration.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -31,6 +32,10 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AuthProvider authProvider;
 
     @Column(nullable = false)
     private boolean enabled;

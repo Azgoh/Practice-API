@@ -1,10 +1,10 @@
 package com.example.PracticeApi.service;
 
 import com.example.PracticeApi.entity.UserEntity;
+import com.example.PracticeApi.enumeration.AuthProvider;
 import com.example.PracticeApi.exception.AlreadyExistsException;
 import com.example.PracticeApi.exception.ResourceNotFoundException;
 import com.example.PracticeApi.repository.UserRepository;
-import com.example.PracticeApi.security.JwtUtil;
 import com.example.PracticeApi.dto.LoginRequestDto;
 import com.example.PracticeApi.dto.RegisterRequestDto;
 import com.example.PracticeApi.dto.UserDto;
@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.example.PracticeApi.component.JwtUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtils;
+
+    private final JwtUtils jwtUtils;
 
     public void registerUser(RegisterRequestDto request){
         if(userRepository.existsByUsername(request.getUsername())){
@@ -46,7 +48,8 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEnabled(false);
-        user.setRole(Role.ADMIN); //Change this
+        user.setRole(Role.USER); //Change this
+        user.setAuthProvider(AuthProvider.LOCAL);
 
         String token = UUID.randomUUID().toString();
         user.setVerificationToken(token);
@@ -74,6 +77,10 @@ public class UserService {
 
         if(!optUser.isEnabled()){
             throw new DisabledException("Account is not enabled. Please verify your email");
+        }
+
+        if(optUser.getAuthProvider() != AuthProvider.LOCAL){
+            throw new IllegalStateException("This account is already registered via Google login");
         }
 
         Authentication authentication = authenticationManager.authenticate(

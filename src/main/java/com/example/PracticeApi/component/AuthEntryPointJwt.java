@@ -1,4 +1,4 @@
-package com.example.PracticeApi.security;
+package com.example.PracticeApi.component;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package com.example.PracticeApi.security;
+package com.example.PracticeApi.component;
 
 import com.example.PracticeApi.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;

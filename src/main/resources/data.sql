@@ -10,7 +10,7 @@ INSERT INTO users (
 VALUES (
     'admin',
     'admin@example.com',
-    '$2a$10$Qq0L6G78LxFsyEzN6KHJje8DppAvlJ6yz5RfnhH7fPqXOT.S6oGQK', -- password: admin123
+    '$2a$12$pCZbFA6MDLy2PL4EaQqih.hvdGM/wZ1Gue/fjhU.B2n24sxuW04ze', -- password: admin123
     'ADMIN',
     true,
     NULL,

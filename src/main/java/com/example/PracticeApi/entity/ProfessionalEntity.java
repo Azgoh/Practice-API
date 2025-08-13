@@ -1,5 +1,6 @@
 package com.example.PracticeApi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class ProfessionalEntity {
     private String phone;
     @OneToOne
     @JoinColumn(name="user_id", nullable = false, unique = true)
+    @JsonIgnore
     private UserEntity user;
 
     @OneToMany(mappedBy = "professional", cascade = CascadeType.ALL)

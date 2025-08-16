@@ -1,5 +1,6 @@
 package com.example.PracticeApi.dto;
 
+import com.example.PracticeApi.enumeration.AuthProvider;
 import com.example.PracticeApi.enumeration.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +16,6 @@ public class UserDto {
     private String email;
     private Role role;
     private boolean enabled;
+    private AuthProvider authProvider;
 
 }

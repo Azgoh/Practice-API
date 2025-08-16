@@ -121,7 +121,8 @@ public class UserService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
-                user.isEnabled());
+                user.isEnabled(),
+                user.getAuthProvider());
     }
 
 }

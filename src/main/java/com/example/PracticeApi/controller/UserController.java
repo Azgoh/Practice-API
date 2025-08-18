@@ -14,11 +14,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -45,11 +48,15 @@ public class UserController {
     @GetMapping(value = "/verify-email", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> verifyEmail(@RequestParam("token") String token){
         String result = userService.validateVerificationToken(token);
+        String redirectUrl = "http://localhost:4200/verify-email";
         if("Valid".equals(result)){
-            return ResponseEntity.ok("Email verified successfully.");
+            redirectUrl += "?status=success";
         }else{
-            return ResponseEntity.badRequest().body("Invalid or expired verification token");
+            redirectUrl += "?status=fail";
         }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(redirectUrl));
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
     @Operation(summary = "Log in a user")

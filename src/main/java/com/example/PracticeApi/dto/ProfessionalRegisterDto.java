@@ -11,9 +11,12 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProfessionalRegisterDto {
-    @NotBlank(message = "Full name is required")
-    @Size(min = 5, max = 100, message = "Full name must be between 5 and 100 characters")
-    private String fullName;
+    @NotBlank(message = "First name is required")
+    @Size(min = 5, max=20, message = "First name must be between 5 and 20 characters")
+    private String firstName;
+    @NotBlank(message = "Last name is required")
+    @Size(min = 5, max = 20, message = "Last name must be between 5 and 20 characters")
+    private String lastName;
     @NotBlank(message = "Profession is required")
     private String profession;
     @NotBlank(message = "Location is required")

@@ -21,7 +21,9 @@ public class ProfessionalEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String fullName;
+    private String firstName;
+    @Column(nullable = false)
+    private String lastName;
     @Column(nullable = false)
     private String profession;
     @Column(nullable = false)

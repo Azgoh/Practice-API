@@ -31,7 +31,8 @@ public class ProfessionalService {
 
         ProfessionalEntity professional = new ProfessionalEntity();
         professional.setUser(user);
-        professional.setFullName(dto.getFullName());
+        professional.setFirstName(dto.getFirstName());
+        professional.setLastName(dto.getLastName());
         professional.setProfession(dto.getProfession());
         professional.setLocation(dto.getLocation());
         professional.setDescription(dto.getDescription());
@@ -59,7 +60,8 @@ public class ProfessionalService {
     public ProfessionalEntity updateProfessional(Long id, ProfessionalRegisterDto dto) {
         ProfessionalEntity professional = getProfessionalById(id);
 
-        professional.setFullName(dto.getFullName());
+        professional.setFirstName(dto.getFirstName());
+        professional.setLastName(dto.getLastName());
         professional.setProfession(dto.getProfession());
         professional.setLocation(dto.getLocation());
         professional.setDescription(dto.getDescription());

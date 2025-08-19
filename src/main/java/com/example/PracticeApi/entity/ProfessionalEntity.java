@@ -33,10 +33,8 @@ public class ProfessionalEntity {
     private String phone;
     @OneToOne
     @JoinColumn(name="user_id", nullable = false, unique = true)
-    @JsonIgnore
     private UserEntity user;
 
     @OneToMany(mappedBy = "professional", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "professional-rating")
     private List<RatingEntity> ratingsReceived;
 }

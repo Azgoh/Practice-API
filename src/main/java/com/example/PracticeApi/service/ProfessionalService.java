@@ -1,5 +1,6 @@
 package com.example.PracticeApi.service;
 
+import com.example.PracticeApi.dto.ProfessionalDto;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.exception.AlreadyExistsException;
@@ -8,11 +9,14 @@ import com.example.PracticeApi.repository.ProfessionalRepository;
 import com.example.PracticeApi.repository.UserRepository;
 import com.example.PracticeApi.dto.ProfessionalRegisterDto;
 import com.example.PracticeApi.enumeration.Role;
+import com.nimbusds.openid.connect.sdk.id.SectorID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +53,14 @@ public class ProfessionalService {
                 .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
     }
 
+    public ProfessionalEntity getProfessionalByJwt(){
+        String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity currentUser = userRepository.findByUsernameOrEmail(identifier)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return professionalRepository.findByUser(currentUser)
+                .orElseThrow(() -> new ResourceNotFoundException("Professional profile not found"));
+    }
+
     public List<ProfessionalEntity> getAllProfessionals(){
         return professionalRepository.findAll();
     }
@@ -68,5 +80,16 @@ public class ProfessionalService {
         professional.setPhone(dto.getPhone());
 
         return professionalRepository.save(professional);
+    }
+
+    public ProfessionalDto toDto(ProfessionalEntity professional){
+        return new ProfessionalDto(professional.getId(),
+                professional.getFirstName(),
+                professional.getLastName(),
+                professional.getProfession(),
+                professional.getLocation(),
+                professional.getDescription(),
+                professional.getPhone(),
+                professional.getRatingsReceived());
     }
 }

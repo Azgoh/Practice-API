@@ -1,13 +1,13 @@
 package com.example.PracticeApi.service;
 
+import com.example.PracticeApi.dto.*;
+import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.enumeration.AuthProvider;
 import com.example.PracticeApi.exception.AlreadyExistsException;
 import com.example.PracticeApi.exception.ResourceNotFoundException;
+import com.example.PracticeApi.repository.ProfessionalRepository;
 import com.example.PracticeApi.repository.UserRepository;
-import com.example.PracticeApi.dto.LoginRequestDto;
-import com.example.PracticeApi.dto.RegisterRequestDto;
-import com.example.PracticeApi.dto.UserDto;
 import com.example.PracticeApi.enumeration.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,10 +28,10 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ProfessionalRepository professionalRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
-
     private final JwtUtils jwtUtils;
 
     public void registerUser(RegisterRequestDto request){
@@ -72,7 +72,7 @@ public class UserService {
 
     public String loginUser(LoginRequestDto request){
         String identifier = request.getIdentifier();
-        UserEntity optUser = findUserByUsernameOrEmail(identifier)
+        UserEntity optUser = userRepository.findByUsernameOrEmail(identifier)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if(!optUser.isEnabled()){
@@ -91,25 +91,45 @@ public class UserService {
     }
 
     public UserEntity getAuthenticatedUser(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String identifier = auth.getName();
+        String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsernameOrEmail(identifier)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public Optional<UserEntity> getUserById(Long id){
-        Optional<UserEntity> optUser = userRepository.findById(id);
-        if(optUser.isEmpty()){
-            throw new ResourceNotFoundException("User not found");
-        }
-        return optUser;
+    public UserEntity getUserById(Long id){
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
     public List<UserEntity> getAllUsers(){
         return userRepository.findAll();
     }
 
-    public Optional<UserEntity> findUserByUsernameOrEmail(String identifier){
-        return userRepository.findByUsernameOrEmail(identifier);
+    public UserWithProfessionalDto getCurrentUserWithProfessional(){
+        UserEntity user = getAuthenticatedUser();
+        ProfessionalEntity professional = professionalRepository.findByUser(user).orElse(null);
+
+        ProfessionalDto profDto = professional != null
+                ? new ProfessionalDto(
+                        professional.getId(),
+                        professional.getFirstName(),
+                        professional.getLastName(),
+                        professional.getProfession(),
+                        professional.getLocation(),
+                        professional.getDescription(),
+                        professional.getPhone(),
+                        professional.getRatingsReceived()
+        )
+                : null;
+
+        return new UserWithProfessionalDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole(),
+                user.isEnabled(),
+                user.getAuthProvider(),
+                profDto
+        );
     }
 
     public void deleteAllUsers() {

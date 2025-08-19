@@ -1,5 +1,6 @@
 package com.example.PracticeApi.controller;
 
+import com.example.PracticeApi.dto.ProfessionalDto;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.service.ProfessionalService;
 import com.example.PracticeApi.dto.ProfessionalRegisterDto;
@@ -25,12 +26,25 @@ public class ProfessionalController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfessionalEntity> getProfessionalById(@PathVariable Long id){
-        return ResponseEntity.ok(professionalService.getProfessionalById(id));
+    public ResponseEntity<ProfessionalDto> getProfessionalById(@PathVariable Long id){
+        ProfessionalEntity professional = professionalService.getProfessionalById(id);
+        ProfessionalDto dto = professionalService.toDto(professional);
+        return ResponseEntity.ok(dto);
     }
 
+    @GetMapping(value = "/me")
+    public ResponseEntity<ProfessionalDto> getProfessionalByJwt(){
+        ProfessionalEntity professional = professionalService.getProfessionalByJwt();
+        ProfessionalDto dto = professionalService.toDto(professional);
+        return ResponseEntity.ok(dto);
+    }
     @GetMapping
-    public ResponseEntity<List<ProfessionalEntity>> getAllProfessionals(){
-        return ResponseEntity.ok(professionalService.getAllProfessionals());
+    public ResponseEntity<List<ProfessionalDto>> getAllProfessionals(){
+        List<ProfessionalEntity> professionals = professionalService.getAllProfessionals();
+        List<ProfessionalDto> dtos = professionals.stream()
+                .map(prof -> professionalService.toDto(prof))
+                .toList();
+
+        return ResponseEntity.ok(dtos);
     }
 }

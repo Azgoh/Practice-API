@@ -14,5 +14,6 @@ public interface ProfessionalRepository extends JpaRepository<ProfessionalEntity
     List<ProfessionalEntity> findByProfessionIgnoreCase(String profession);
     List<ProfessionalEntity> findByProfessionIgnoreCaseAndLocationIgnoreCase(String profession, String location);
 
+    Optional<ProfessionalEntity> findByUser(UserEntity user);
     boolean existsByUser(UserEntity user);
 }

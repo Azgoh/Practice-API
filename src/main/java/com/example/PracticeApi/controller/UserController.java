@@ -1,11 +1,8 @@
 package com.example.PracticeApi.controller;
 
+import com.example.PracticeApi.dto.*;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.service.UserService;
-import com.example.PracticeApi.dto.ErrorResponseDto;
-import com.example.PracticeApi.dto.LoginRequestDto;
-import com.example.PracticeApi.dto.RegisterRequestDto;
-import com.example.PracticeApi.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -71,21 +69,27 @@ public class UserController {
     public ResponseEntity<List<UserDto>> getAllUsers(){
 
         List<UserEntity> users = userService.getAllUsers();
-        List<UserDto> usersDto = users.stream()
+        List<UserDto> dtos = users.stream()
                 .map(user -> userService.toDto(user))
                 .toList();
 
-        return ResponseEntity.ok(usersDto);
+        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Returns a user based on their id")
     @GetMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDto> getUserById(@PathVariable long id){
+        UserEntity user = userService.getUserById(id);
+        UserDto dto = userService.toDto(user);
+        return ResponseEntity.ok(dto);
+    }
 
-        return userService.getUserById(id)
-                .map(user -> userService.toDto(user))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @Operation(summary = "Returns the user's profile")
+    @GetMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> getUserByJwt(){
+        UserEntity user = userService.getAuthenticatedUser();
+        UserDto dto = userService.toDto(user);
+        return ResponseEntity.ok(dto);
     }
 
     @Operation(summary = "Deletes all users. Must be an admin")
@@ -94,6 +98,12 @@ public class UserController {
     public ResponseEntity<String> deleteAllUsers() {
         userService.deleteAllUsers();
         return ResponseEntity.ok("All users deleted successfully");
+    }
+
+    @Operation(summary = "Returns the user and the professional profile")
+    @GetMapping("/me")
+    public ResponseEntity<UserWithProfessionalDto> getMe(){
+        return ResponseEntity.ok(userService.getCurrentUserWithProfessional());
     }
 
 }

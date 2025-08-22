@@ -4,6 +4,8 @@ import com.example.PracticeApi.dto.ReviewDto;
 import com.example.PracticeApi.entity.ReviewEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ReviewMapper {
 
@@ -17,5 +19,11 @@ public class ReviewMapper {
                 review.getScore(),
                 review.getReview(),
                 review.getTimestamp());
+    }
+
+    public List<ReviewDto> toDtoList(List<ReviewEntity> reviews) {
+        return reviews.stream()
+                .map(this::toDto)
+                .toList();
     }
 }

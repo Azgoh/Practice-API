@@ -15,9 +15,9 @@ public class UserMapper {
     private final ReviewMapper reviewMapper;
 
     public UserDto toDto(UserEntity user){
-        List<ReviewDto> reviews = user.getReviewsGiven().stream()
-                .map(reviewMapper::toDto)
-                .toList();
+
+        List<ReviewDto> reviews = reviewMapper.toDtoList(user.getReviewsGiven());
+
         return new UserDto(user.getId(),
                 user.getUsername(),
                 user.getEmail(),

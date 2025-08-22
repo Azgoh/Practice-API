@@ -15,9 +15,9 @@ public class ProfessionalMapper {
     private final ReviewMapper reviewMapper;
 
     public ProfessionalDto toDto(ProfessionalEntity professional){
-        List<ReviewDto> reviews = professional.getReviews().stream()
-                .map(reviewMapper::toDto)
-                .toList();
+
+        List<ReviewDto> reviews = reviewMapper.toDtoList(professional.getReviews());
+
         return new ProfessionalDto(professional.getId(),
                 professional.getFirstName(),
                 professional.getLastName(),

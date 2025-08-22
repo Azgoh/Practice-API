@@ -1,5 +1,6 @@
 package com.example.PracticeApi.service;
 
+import com.example.PracticeApi.dto.ProfessionalDto;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.ReviewEntity;
 import com.example.PracticeApi.entity.UserEntity;
@@ -53,6 +54,17 @@ public class ReviewService {
         ProfessionalEntity professional = professionalRepository.findById(professionalId)
                 .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
         return reviewRepository.findByProfessional(professional);
+    }
+
+    public List<ReviewEntity> getMyReceivedReviewsAsAProfessional(){
+        UserEntity user = userService.getAuthenticatedUser();
+        ProfessionalEntity professional = professionalRepository.findByUser(user).orElse(null);
+        return professional.getReviews();
+    }
+
+    public List<ReviewEntity> getMyGivenReviewsAsAUser(){
+        UserEntity user = userService.getAuthenticatedUser();
+        return user.getReviewsGiven();
     }
 
     public double getAverageRating(Long professionalId){

@@ -35,7 +35,7 @@ public class ReviewController {
     }
 
     @GetMapping("/professionals/{professionalId}")
-    public ResponseEntity<List<ReviewDto>> getReviewsForProfessional(
+    public ResponseEntity<List<ReviewDto>> getReviewsForProfessionalById(
             @PathVariable Long professionalId
     ){
         List<ReviewEntity> reviews = reviewService.getReviewsForProfessional(professionalId);
@@ -46,9 +46,27 @@ public class ReviewController {
     }
 
     @GetMapping("/professionals/{professionalId}/average")
-    public ResponseEntity<Double> getAverageRating(@PathVariable Long professionalId){
+    public ResponseEntity<Double> getAverageRatingByProfessionalId(@PathVariable Long professionalId){
         double avg = reviewService.getAverageRating(professionalId);
         return ResponseEntity.ok(avg);
+    }
+
+    @GetMapping("/my-received-reviews")
+    public ResponseEntity<List<ReviewDto>> getMyReceivedReviewsAsAProfessional(){
+        List<ReviewEntity> reviews = reviewService.getMyReceivedReviewsAsAProfessional();
+        List<ReviewDto> reviewDtos = reviews.stream()
+                .map(reviewMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(reviewDtos);
+    }
+
+    @GetMapping("/my-given-reviews")
+    public ResponseEntity<List<ReviewDto>> getMyGivenReviewsAsAUser(){
+        List<ReviewEntity> reviews = reviewService.getMyGivenReviewsAsAUser();
+        List<ReviewDto> reviewDtos = reviews.stream()
+                .map(reviewMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(reviewDtos);
     }
 
 }

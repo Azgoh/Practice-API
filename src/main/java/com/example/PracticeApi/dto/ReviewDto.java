@@ -9,11 +9,14 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RatingDto {
+public class ReviewDto {
 
     private Long reviewId;
-    private Long professionalId;
     private Long reviewerId;
+    private Long professionalId;
+    private String professionalFirstName;
+    private String professionalLastName;
+    private String reviewerUsername;
     private int score;
     private String review;
     private LocalDateTime timestamp;

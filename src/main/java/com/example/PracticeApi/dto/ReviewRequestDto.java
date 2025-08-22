@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class RatingRequestDto {
+public class ReviewRequestDto {
 
     @NotBlank(message = "Professional ID is required")
     private Long professionalId;

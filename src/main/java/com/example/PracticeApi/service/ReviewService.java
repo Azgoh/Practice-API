@@ -1,12 +1,11 @@
 package com.example.PracticeApi.service;
 
 import com.example.PracticeApi.entity.ProfessionalEntity;
-import com.example.PracticeApi.entity.RatingEntity;
+import com.example.PracticeApi.entity.ReviewEntity;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.exception.ResourceNotFoundException;
 import com.example.PracticeApi.repository.ProfessionalRepository;
-import com.example.PracticeApi.repository.RatingRepository;
-import com.example.PracticeApi.dto.RatingDto;
+import com.example.PracticeApi.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +16,13 @@ import java.util.OptionalDouble;
 
 @Service
 @RequiredArgsConstructor
-public class RatingService {
+public class ReviewService {
 
-    private final RatingRepository ratingRepository;
+    private final ReviewRepository reviewRepository;
     private final ProfessionalRepository professionalRepository;
     private final UserService userService;
 
-    public RatingEntity addOrUpdateRating(Long professionalId, int score, String review){
+    public ReviewEntity addOrUpdateReview(Long professionalId, int score, String review){
 
         if(score < 1 || score > 5){
             throw new IllegalArgumentException("Score must be between 1 and 5");
@@ -34,40 +33,32 @@ public class RatingService {
 
         UserEntity user = userService.getAuthenticatedUser();
 
-        Optional<RatingEntity> existingRatingOpt = ratingRepository.findByProfessionalAndReviewer(professional, user);
+        Optional<ReviewEntity> existingRatingOpt = reviewRepository.findByProfessionalAndReviewer(professional, user);
 
-        RatingEntity rating;
+        ReviewEntity rating;
         if(existingRatingOpt.isPresent()){
             rating = existingRatingOpt.get();
         } else {
-            rating = new RatingEntity();
+            rating = new ReviewEntity();
             rating.setProfessional(professional);
             rating.setReviewer(user);
         }
         rating.setScore(score);
         rating.setReview(review);
         rating.setTimestamp(LocalDateTime.now());
-        return ratingRepository.save(rating);
+        return reviewRepository.save(rating);
     }
 
-    public List<RatingEntity> getRatingsForProfessional(Long professionalId){
+    public List<ReviewEntity> getReviewsForProfessional(Long professionalId){
         ProfessionalEntity professional = professionalRepository.findById(professionalId)
                 .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
-        return ratingRepository.findByProfessional(professional);
+        return reviewRepository.findByProfessional(professional);
     }
 
     public double getAverageRating(Long professionalId){
-        List<RatingEntity> ratings = getRatingsForProfessional(professionalId);
-        OptionalDouble average = ratings.stream().mapToInt(RatingEntity::getScore).average();
+        List<ReviewEntity> ratings = getReviewsForProfessional(professionalId);
+        OptionalDouble average = ratings.stream().mapToInt(ReviewEntity::getScore).average();
         return average.orElse(0.0);
     }
 
-    public RatingDto toDto(RatingEntity ratingEntity){
-        return new RatingDto(ratingEntity.getId(),
-                ratingEntity.getProfessional().getId(),
-                ratingEntity.getReviewer().getId(),
-                ratingEntity.getScore(),
-                ratingEntity.getReview(),
-                ratingEntity.getTimestamp());
-    }
 }

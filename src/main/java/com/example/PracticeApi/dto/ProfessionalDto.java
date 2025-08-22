@@ -1,7 +1,6 @@
 package com.example.PracticeApi.dto;
 
-
-import com.example.PracticeApi.entity.RatingEntity;
+import com.example.PracticeApi.entity.ReviewEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +19,6 @@ public class ProfessionalDto {
     private String location;
     private String description;
     private String phone;
-    private List<RatingEntity> ratingsReceived;
+    private List<ReviewDto> reviewsReceived;
 }
 

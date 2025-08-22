@@ -1,5 +1,6 @@
 package com.example.PracticeApi.controller;
 
+import com.example.PracticeApi.mapper.ProfessionalMapper;
 import com.example.PracticeApi.dto.ProfessionalDto;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.service.ProfessionalService;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProfessionalController {
     private final ProfessionalService professionalService;
+    private final ProfessionalMapper professionalMapper;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerProfessional(@Valid @RequestBody ProfessionalRegisterDto dto){
@@ -28,21 +30,21 @@ public class ProfessionalController {
     @GetMapping("/{id}")
     public ResponseEntity<ProfessionalDto> getProfessionalById(@PathVariable Long id){
         ProfessionalEntity professional = professionalService.getProfessionalById(id);
-        ProfessionalDto dto = professionalService.toDto(professional);
+        ProfessionalDto dto = professionalMapper.toDto(professional);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping(value = "/me")
     public ResponseEntity<ProfessionalDto> getProfessionalByJwt(){
         ProfessionalEntity professional = professionalService.getProfessionalByJwt();
-        ProfessionalDto dto = professionalService.toDto(professional);
+        ProfessionalDto dto = professionalMapper.toDto(professional);
         return ResponseEntity.ok(dto);
     }
     @GetMapping
     public ResponseEntity<List<ProfessionalDto>> getAllProfessionals(){
         List<ProfessionalEntity> professionals = professionalService.getAllProfessionals();
         List<ProfessionalDto> dtos = professionals.stream()
-                .map(prof -> professionalService.toDto(prof))
+                .map(prof -> professionalMapper.toDto(prof))
                 .toList();
 
         return ResponseEntity.ok(dtos);

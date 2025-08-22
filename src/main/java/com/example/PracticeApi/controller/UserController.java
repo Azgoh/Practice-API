@@ -1,5 +1,6 @@
 package com.example.PracticeApi.controller;
 
+import com.example.PracticeApi.mapper.UserMapper;
 import com.example.PracticeApi.dto.*;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.service.UserService;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,6 +29,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @Operation(summary = "Register a new user")
     @ApiResponses(value = {
@@ -70,7 +71,7 @@ public class UserController {
 
         List<UserEntity> users = userService.getAllUsers();
         List<UserDto> dtos = users.stream()
-                .map(user -> userService.toDto(user))
+                .map(user -> userMapper.toDto(user))
                 .toList();
 
         return ResponseEntity.ok(dtos);
@@ -80,7 +81,7 @@ public class UserController {
     @GetMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDto> getUserById(@PathVariable long id){
         UserEntity user = userService.getUserById(id);
-        UserDto dto = userService.toDto(user);
+        UserDto dto = userMapper.toDto(user);
         return ResponseEntity.ok(dto);
     }
 
@@ -88,7 +89,7 @@ public class UserController {
     @GetMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDto> getUserByJwt(){
         UserEntity user = userService.getAuthenticatedUser();
-        UserDto dto = userService.toDto(user);
+        UserDto dto = userMapper.toDto(user);
         return ResponseEntity.ok(dto);
     }
 

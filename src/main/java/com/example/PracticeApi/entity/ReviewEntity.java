@@ -12,18 +12,17 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
-public class RatingEntity {
+public class ReviewEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professional_id", nullable = false)
-    @JsonBackReference(value = "professional-rating")
     private ProfessionalEntity professional;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference(value = "user-rating")
+    @JsonBackReference(value = "user-review")
     private UserEntity reviewer;
 
     @Min(1)

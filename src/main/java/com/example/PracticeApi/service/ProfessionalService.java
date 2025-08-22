@@ -1,6 +1,6 @@
 package com.example.PracticeApi.service;
 
-import com.example.PracticeApi.dto.ProfessionalDto;
+
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.exception.AlreadyExistsException;
@@ -9,14 +9,11 @@ import com.example.PracticeApi.repository.ProfessionalRepository;
 import com.example.PracticeApi.repository.UserRepository;
 import com.example.PracticeApi.dto.ProfessionalRegisterDto;
 import com.example.PracticeApi.enumeration.Role;
-import com.nimbusds.openid.connect.sdk.id.SectorID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -82,14 +79,4 @@ public class ProfessionalService {
         return professionalRepository.save(professional);
     }
 
-    public ProfessionalDto toDto(ProfessionalEntity professional){
-        return new ProfessionalDto(professional.getId(),
-                professional.getFirstName(),
-                professional.getLastName(),
-                professional.getProfession(),
-                professional.getLocation(),
-                professional.getDescription(),
-                professional.getPhone(),
-                professional.getRatingsReceived());
-    }
 }

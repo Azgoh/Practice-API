@@ -27,7 +27,6 @@ public class UserEntity {
     private String email;
 
     @Column(nullable = false)
-    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -40,14 +39,12 @@ public class UserEntity {
     @Column(nullable = false)
     private boolean enabled;
 
-    @JsonIgnore
     private String verificationToken;
 
     @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "user-rating")
-    private List<RatingEntity> ratingsGiven;
+    @JsonManagedReference(value = "user-review")
+    private List<ReviewEntity> reviewsGiven;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
     private ProfessionalEntity professionalEntity;
 }

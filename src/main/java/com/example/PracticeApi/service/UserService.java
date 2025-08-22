@@ -1,11 +1,14 @@
 package com.example.PracticeApi.service;
 
+import com.example.PracticeApi.mapper.ProfessionalMapper;
+import com.example.PracticeApi.mapper.ReviewMapper;
 import com.example.PracticeApi.dto.*;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.enumeration.AuthProvider;
 import com.example.PracticeApi.exception.AlreadyExistsException;
 import com.example.PracticeApi.exception.ResourceNotFoundException;
+import com.example.PracticeApi.mapper.UserMapper;
 import com.example.PracticeApi.repository.ProfessionalRepository;
 import com.example.PracticeApi.repository.UserRepository;
 import com.example.PracticeApi.enumeration.Role;
@@ -20,7 +23,6 @@ import org.springframework.stereotype.Service;
 import com.example.PracticeApi.component.JwtUtils;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -33,6 +35,8 @@ public class UserService {
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final ProfessionalMapper professionalMapper;
+    private final UserMapper userMapper;
 
     public void registerUser(RegisterRequestDto request){
         if(userRepository.existsByUsername(request.getUsername())){
@@ -108,41 +112,20 @@ public class UserService {
         UserEntity user = getAuthenticatedUser();
         ProfessionalEntity professional = professionalRepository.findByUser(user).orElse(null);
 
+        UserDto userDto = userMapper.toDto(user);
+
         ProfessionalDto profDto = professional != null
-                ? new ProfessionalDto(
-                        professional.getId(),
-                        professional.getFirstName(),
-                        professional.getLastName(),
-                        professional.getProfession(),
-                        professional.getLocation(),
-                        professional.getDescription(),
-                        professional.getPhone(),
-                        professional.getRatingsReceived()
-        )
+                ? professionalMapper.toDto(professional)
                 : null;
 
         return new UserWithProfessionalDto(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole(),
-                user.isEnabled(),
-                user.getAuthProvider(),
+                userDto,
                 profDto
         );
     }
 
     public void deleteAllUsers() {
         userRepository.deleteAll();
-    }
-
-    public UserDto toDto(UserEntity user){
-        return new UserDto(user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole(),
-                user.isEnabled(),
-                user.getAuthProvider());
     }
 
 }

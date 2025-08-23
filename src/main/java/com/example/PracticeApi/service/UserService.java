@@ -52,7 +52,7 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEnabled(false);
-        user.setRole(Role.USER); //Change this
+        user.setRole(Role.USER);
         user.setAuthProvider(AuthProvider.LOCAL);
 
         String token = UUID.randomUUID().toString();
@@ -100,6 +100,12 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
+    public ProfessionalEntity getAuthenticatedProfessional(){
+        UserEntity user = getAuthenticatedUser();
+        return professionalRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
+    }
+
     public UserEntity getUserById(Long id){
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -110,13 +116,11 @@ public class UserService {
 
     public UserWithProfessionalDto getCurrentUserWithProfessional(){
         UserEntity user = getAuthenticatedUser();
-        ProfessionalEntity professional = professionalRepository.findByUser(user).orElse(null);
+        ProfessionalEntity professional = getAuthenticatedProfessional();
 
         UserDto userDto = userMapper.toDto(user);
 
-        ProfessionalDto profDto = professional != null
-                ? professionalMapper.toDto(professional)
-                : null;
+        ProfessionalDto profDto = professionalMapper.toDto(professional);
 
         return new UserWithProfessionalDto(
                 userDto,

@@ -16,7 +16,7 @@ public class ProfessionalMapper {
 
     public ProfessionalDto toDto(ProfessionalEntity professional){
 
-        List<ReviewDto> reviews = reviewMapper.toDtoList(professional.getReviews());
+        List<ReviewDto> reviews = reviewMapper.toDtoList(professional.getReviewsReceived());
 
         return new ProfessionalDto(professional.getId(),
                 professional.getFirstName(),

@@ -35,5 +35,5 @@ public class ProfessionalEntity {
     private UserEntity user;
 
     @OneToMany(mappedBy = "professional", cascade = CascadeType.ALL)
-    private List<ReviewEntity> reviews;
+    private List<ReviewEntity> reviewsReceived;
 }

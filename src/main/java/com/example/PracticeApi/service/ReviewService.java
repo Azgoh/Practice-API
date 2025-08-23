@@ -1,6 +1,5 @@
 package com.example.PracticeApi.service;
 
-import com.example.PracticeApi.dto.ProfessionalDto;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.ReviewEntity;
 import com.example.PracticeApi.entity.UserEntity;
@@ -57,9 +56,8 @@ public class ReviewService {
     }
 
     public List<ReviewEntity> getMyReceivedReviewsAsAProfessional(){
-        UserEntity user = userService.getAuthenticatedUser();
-        ProfessionalEntity professional = professionalRepository.findByUser(user).orElse(null);
-        return professional.getReviews();
+        ProfessionalEntity professional = userService.getAuthenticatedProfessional();
+        return professional.getReviewsReceived();
     }
 
     public List<ReviewEntity> getMyGivenReviewsAsAUser(){

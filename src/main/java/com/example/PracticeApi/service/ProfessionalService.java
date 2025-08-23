@@ -50,14 +50,6 @@ public class ProfessionalService {
                 .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
     }
 
-    public ProfessionalEntity getProfessionalByJwt(){
-        String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity currentUser = userRepository.findByUsernameOrEmail(identifier)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return professionalRepository.findByUser(currentUser)
-                .orElseThrow(() -> new ResourceNotFoundException("Professional profile not found"));
-    }
-
     public List<ProfessionalEntity> getAllProfessionals(){
         return professionalRepository.findAll();
     }

@@ -11,7 +11,7 @@ VALUES (
     'admin',
     'admin@example.com',
     '$2a$12$pCZbFA6MDLy2PL4EaQqih.hvdGM/wZ1Gue/fjhU.B2n24sxuW04ze', -- password: admin123
-    'ADMIN',
+    'USER',
     true,
     NULL,
     'LOCAL'

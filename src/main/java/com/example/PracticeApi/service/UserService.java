@@ -116,11 +116,15 @@ public class UserService {
 
     public UserWithProfessionalDto getCurrentUserWithProfessional(){
         UserEntity user = getAuthenticatedUser();
-        ProfessionalEntity professional = getAuthenticatedProfessional();
-
         UserDto userDto = userMapper.toDto(user);
 
-        ProfessionalDto profDto = professionalMapper.toDto(professional);
+        ProfessionalDto profDto = null;
+        if (user.getRole() == Role.PROFESSIONAL) {
+            ProfessionalEntity professional = getAuthenticatedProfessional();
+            if (professional != null) {
+                profDto = professionalMapper.toDto(professional);
+            }
+        }
 
         return new UserWithProfessionalDto(
                 userDto,

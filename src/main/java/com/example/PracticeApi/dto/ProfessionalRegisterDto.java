@@ -21,9 +21,9 @@ public class ProfessionalRegisterDto {
     private String location;
     @Size(max = 100, message = "Description can be up to 100 characters")
     private String description;
-    @NotBlank(message = "Hourly rate is required")
-    private String hourlyRate;
     @NotBlank(message = "Phone number is required")
     @Size(min = 10, max = 10, message = "Phone number must be 10 characters")
     private String phone;
+    @NotBlank(message = "Hourly rate is required")
+    private String hourlyRate;
 }

@@ -16,7 +16,6 @@ public class AvailabilityMapper {
     public AvailabilityDto toDto(AvailabilityEntity availabilityEntity){
         return new AvailabilityDto(
                 availabilityEntity.getDate(),
-                availabilityEntity.getDayOfWeek(),
                 availabilityEntity.getStartTime(),
                 availabilityEntity.getEndTime()
         );
@@ -26,7 +25,6 @@ public class AvailabilityMapper {
         AvailabilityEntity availabilityEntity = new AvailabilityEntity();
         availabilityEntity.setUser(user);
         availabilityEntity.setDate(availabilityDto.getDate());
-        availabilityEntity.setDayOfWeek(availabilityDto.getDayOfWeek());
         availabilityEntity.setStartTime(availabilityDto.getStartTime());
         availabilityEntity.setEndTime(availabilityDto.getEndTime());
         return availabilityEntity;
@@ -36,7 +34,6 @@ public class AvailabilityMapper {
         AvailabilityEntity availabilityEntity = new AvailabilityEntity();
         availabilityEntity.setProfessional(professional);
         availabilityEntity.setDate(availabilityDto.getDate());
-        availabilityEntity.setDayOfWeek(availabilityDto.getDayOfWeek());
         availabilityEntity.setStartTime(availabilityDto.getStartTime());
         availabilityEntity.setEndTime(availabilityDto.getEndTime());
         return availabilityEntity;

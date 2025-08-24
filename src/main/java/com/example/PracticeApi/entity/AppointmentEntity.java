@@ -5,26 +5,25 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
 @Data
+@Table(name = "appointments")
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "availabilities")
-public class AvailabilityEntity {
+public class AppointmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     @ManyToOne
-    @JoinColumn(name = "professional_id")
+    @JoinColumn(name = "professional_id", nullable = false)
     private ProfessionalEntity professional;
 
     @Column(nullable = false)

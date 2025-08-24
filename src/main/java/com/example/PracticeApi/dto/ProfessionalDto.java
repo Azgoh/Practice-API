@@ -19,6 +19,7 @@ public class ProfessionalDto {
     private String location;
     private String description;
     private String phone;
+    private String hourlyRate;
     private List<ReviewDto> reviewsReceived;
 }
 

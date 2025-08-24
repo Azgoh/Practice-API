@@ -24,6 +24,7 @@ public class ProfessionalMapper {
                 professional.getProfession(),
                 professional.getLocation(),
                 professional.getDescription(),
+                professional.getHourlyRate(),
                 professional.getPhone(),
                 reviews);
     }

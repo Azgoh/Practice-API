@@ -38,6 +38,7 @@ public class ProfessionalService {
         professional.setLocation(dto.getLocation());
         professional.setDescription(dto.getDescription());
         professional.setPhone(dto.getPhone());
+        professional.setHourlyRate(dto.getHourlyRate());
 
         user.setRole(Role.PROFESSIONAL);
         userRepository.save(user);
@@ -67,6 +68,7 @@ public class ProfessionalService {
         professional.setLocation(dto.getLocation());
         professional.setDescription(dto.getDescription());
         professional.setPhone(dto.getPhone());
+        professional.setHourlyRate(dto.getHourlyRate());
 
         return professionalRepository.save(professional);
     }

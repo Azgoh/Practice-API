@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -25,6 +26,9 @@ public class AvailabilityEntity {
     @ManyToOne
     @JoinColumn(name = "professional_id")
     private ProfessionalEntity professional;
+
+    @Column(nullable = false)
+    private LocalDate date;
 
     @Column(nullable = false)
     private DayOfWeek dayOfWeek;

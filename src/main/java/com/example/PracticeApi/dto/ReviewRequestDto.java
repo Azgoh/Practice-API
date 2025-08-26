@@ -1,18 +1,15 @@
 package com.example.PracticeApi.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
 public class ReviewRequestDto {
 
-    @NotBlank(message = "Professional ID is required")
+    @NotNull(message = "Professional ID cannot be null")
     private Long professionalId;
 
-    @NotBlank(message = "Score is required")
+    @NotNull(message = "Score cannot be null")
     @Min(1)
     @Max(5)
     private int score;

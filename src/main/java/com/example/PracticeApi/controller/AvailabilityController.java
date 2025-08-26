@@ -3,6 +3,7 @@ package com.example.PracticeApi.controller;
 import com.example.PracticeApi.dto.AvailabilityBatchDto;
 import com.example.PracticeApi.dto.AvailabilityDto;
 import com.example.PracticeApi.service.AvailabilityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +20,7 @@ public class AvailabilityController {
 
     @PreAuthorize("hasRole('PROFESSIONAL')")
     @PostMapping("/professional/me/save")
-    public ResponseEntity<List<AvailabilityDto>> addAvailabilitiesForProfessional(@RequestBody AvailabilityBatchDto batchDto){
+    public ResponseEntity<List<AvailabilityDto>> addAvailabilitiesForProfessional(@Valid @RequestBody AvailabilityBatchDto batchDto){
         return ResponseEntity.ok(availabilityService.saveAvailabilitiesForProfessional(batchDto.getAvailabilities()));
     }
 
@@ -36,7 +37,7 @@ public class AvailabilityController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/user/me/save")
-    public ResponseEntity<List<AvailabilityDto>> addAvailabilitiesForUser(@RequestBody AvailabilityBatchDto batchDto){
+    public ResponseEntity<List<AvailabilityDto>> addAvailabilitiesForUser(@Valid @RequestBody AvailabilityBatchDto batchDto){
         return ResponseEntity.ok(availabilityService.saveAvailabilitiesForUser(batchDto.getAvailabilities()));
     }
 

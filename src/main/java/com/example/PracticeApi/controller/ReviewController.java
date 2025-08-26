@@ -6,6 +6,7 @@ import com.example.PracticeApi.service.ReviewService;
 import com.example.PracticeApi.dto.ReviewDto;
 import com.example.PracticeApi.dto.ReviewRequestDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +27,7 @@ public class ReviewController {
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/add")
     public ResponseEntity<ReviewDto> addOrUpdateReview(
-            @RequestBody ReviewRequestDto reviewRequestDto){
+            @Valid @RequestBody ReviewRequestDto reviewRequestDto){
         ReviewEntity review = reviewService.addOrUpdateReview(reviewRequestDto);
 
         return ResponseEntity.ok(reviewMapper.toDto(review));

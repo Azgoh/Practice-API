@@ -1,12 +1,13 @@
 package com.example.PracticeApi.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -14,11 +15,18 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AvailabilityDto {
-    @NotBlank(message = "Date is required")
+    @NotNull(message = "Date cannot be null")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "d MMMM yyyy")
     private LocalDate date;
-    @NotBlank(message = "Start time is required")
+    @NotNull(message = "Start time cannot be null")
     private LocalTime startTime;
-    @NotBlank(message = "End time is required")
+    @NotNull(message = "End time cannot be null")
     private LocalTime endTime;
+
+    @AssertTrue(message = "Start time must be before end time")
+    @JsonIgnore
+    public boolean isStartBeforeEnd() {
+        return startTime != null && endTime != null && startTime.isBefore(endTime);
+    }
+
 }

@@ -3,6 +3,7 @@ package com.example.PracticeApi.controller;
 import com.example.PracticeApi.dto.AppointmentRequestDto;
 import com.example.PracticeApi.dto.AppointmentResponseDto;
 import com.example.PracticeApi.service.AppointmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +20,7 @@ public class AppointmentController {
 
     @PostMapping("/book")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<AppointmentResponseDto> book(@RequestBody AppointmentRequestDto request) {
+    public ResponseEntity<AppointmentResponseDto> book(@Valid @RequestBody AppointmentRequestDto request) {
         return ResponseEntity.ok(appointmentService.bookAppointment(request));
     }
 }

@@ -1,5 +1,6 @@
 package com.example.PracticeApi.service;
 
+import com.example.PracticeApi.dto.ReviewRequestDto;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.ReviewEntity;
 import com.example.PracticeApi.entity.UserEntity;
@@ -22,31 +23,33 @@ public class ReviewService {
     private final ProfessionalRepository professionalRepository;
     private final UserService userService;
 
-    public ReviewEntity addOrUpdateReview(Long professionalId, int score, String review){
+    public ReviewEntity addOrUpdateReview(ReviewRequestDto reviewRequestDto){
 
-        if(score < 1 || score > 5){
+        int score = reviewRequestDto.getScore();
+
+        if( score < 1 || score > 5){
             throw new IllegalArgumentException("Score must be between 1 and 5");
         }
 
-        ProfessionalEntity professional = professionalRepository.findById(professionalId)
+        ProfessionalEntity professional = professionalRepository.findById(reviewRequestDto.getProfessionalId())
                 .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
 
         UserEntity user = userService.getAuthenticatedUser();
 
         Optional<ReviewEntity> existingRatingOpt = reviewRepository.findByProfessionalAndReviewer(professional, user);
 
-        ReviewEntity rating;
+        ReviewEntity review;
         if(existingRatingOpt.isPresent()){
-            rating = existingRatingOpt.get();
+            review = existingRatingOpt.get();
         } else {
-            rating = new ReviewEntity();
-            rating.setProfessional(professional);
-            rating.setReviewer(user);
+            review = new ReviewEntity();
+            review.setProfessional(professional);
+            review.setReviewer(user);
         }
-        rating.setScore(score);
-        rating.setReview(review);
-        rating.setTimestamp(LocalDateTime.now());
-        return reviewRepository.save(rating);
+        review.setScore(score);
+        review.setReview(reviewRequestDto.getReview());
+        review.setTimestamp(LocalDateTime.now());
+        return reviewRepository.save(review);
     }
 
     public List<ReviewEntity> getReviewsForProfessional(Long professionalId){

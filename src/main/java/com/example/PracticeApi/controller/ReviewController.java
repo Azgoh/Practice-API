@@ -24,12 +24,8 @@ public class ReviewController {
 
     @PostMapping("/add")
     public ResponseEntity<ReviewDto> addOrUpdateReview(
-            @RequestBody ReviewRequestDto request){
-        ReviewEntity review = reviewService.addOrUpdateReview(
-                request.getProfessionalId(),
-                request.getScore(),
-                request.getReview()
-        );
+            @RequestBody ReviewRequestDto reviewRequestDto){
+        ReviewEntity review = reviewService.addOrUpdateReview(reviewRequestDto);
 
         return ResponseEntity.ok(reviewMapper.toDto(review));
     }

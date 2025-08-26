@@ -5,7 +5,6 @@ import com.example.PracticeApi.component.AuthTokenFilter;
 import com.example.PracticeApi.component.OAuth2AuthenticationSuccessHandler;
 import com.example.PracticeApi.component.OAuth2FailureHandler;
 import com.example.PracticeApi.service.CustomOAuth2UserService;
-import com.example.PracticeApi.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
-
     private final AuthEntryPointJwt unauthorizedHandler;
 
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -32,11 +29,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler successHandler;
 
     private final OAuth2FailureHandler failureHandler;
-
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter(){
-        return new AuthTokenFilter();
-    }
+    private final AuthTokenFilter authenticationJwtTokenFilter;
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -71,7 +64,7 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .logout(logout -> logout.permitAll());
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

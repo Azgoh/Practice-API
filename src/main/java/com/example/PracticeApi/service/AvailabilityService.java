@@ -42,7 +42,7 @@ public class AvailabilityService {
                 .toList();
     }
 
-    public List<AvailabilityDto> getAnyProfessionalAvailability(Long professionalId){
+    public List<AvailabilityDto> getProfessionalAvailabilityById(Long professionalId){
         return availabilityRepository.findByProfessionalIdOrderByDateAscStartTimeAsc(professionalId).stream()
                 .map(availabilityMapper::toDto)
                 .toList();

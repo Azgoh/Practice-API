@@ -17,22 +17,10 @@ import java.util.List;
 public class AvailabilityController {
     private final AvailabilityService availabilityService;
 
-    @PreAuthorize("hasRole('USER')")
-    @PostMapping("/user/me/save")
-    public ResponseEntity<List<AvailabilityDto>> addAvailabilitiesForUser(@RequestBody AvailabilityBatchDto batchDto){
-        return ResponseEntity.ok(availabilityService.saveAvailabilitiesForUser(batchDto.getAvailabilities()));
-    }
-
     @PreAuthorize("hasRole('PROFESSIONAL')")
     @PostMapping("/professional/me/save")
     public ResponseEntity<List<AvailabilityDto>> addAvailabilitiesForProfessional(@RequestBody AvailabilityBatchDto batchDto){
         return ResponseEntity.ok(availabilityService.saveAvailabilitiesForProfessional(batchDto.getAvailabilities()));
-    }
-
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/user/me")
-    public ResponseEntity<List<AvailabilityDto>> getMyUserAvailability(){
-        return ResponseEntity.ok(availabilityService.getMyUserAvailability());
     }
 
     @PreAuthorize("hasRole('PROFESSIONAL')")
@@ -41,14 +29,26 @@ public class AvailabilityController {
         return ResponseEntity.ok(availabilityService.getMyProfessionalAvailability());
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<List<AvailabilityDto>> getAnyUserAvailability(@PathVariable Long id){
-        return ResponseEntity.ok(availabilityService.getUserAvailabilityById(id));
+    @GetMapping("/professional/{id}")
+    public ResponseEntity<List<AvailabilityDto>> getProfessionalAvailabilityById(@PathVariable Long id){
+        return ResponseEntity.ok(availabilityService.getProfessionalAvailabilityById(id));
     }
 
-    @GetMapping("/professional/{id}")
-    public ResponseEntity<List<AvailabilityDto>> getAnyProfessionalAvailability(@PathVariable Long id){
-        return ResponseEntity.ok(availabilityService.getAnyProfessionalAvailability(id));
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/user/me/save")
+    public ResponseEntity<List<AvailabilityDto>> addAvailabilitiesForUser(@RequestBody AvailabilityBatchDto batchDto){
+        return ResponseEntity.ok(availabilityService.saveAvailabilitiesForUser(batchDto.getAvailabilities()));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/user/me")
+    public ResponseEntity<List<AvailabilityDto>> getMyUserAvailability(){
+        return ResponseEntity.ok(availabilityService.getMyUserAvailability());
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<AvailabilityDto>> getUserAvailabilityById(@PathVariable Long id){
+        return ResponseEntity.ok(availabilityService.getUserAvailabilityById(id));
     }
 
 }

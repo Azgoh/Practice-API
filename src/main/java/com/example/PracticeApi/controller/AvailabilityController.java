@@ -2,11 +2,7 @@ package com.example.PracticeApi.controller;
 
 import com.example.PracticeApi.dto.AvailabilityBatchDto;
 import com.example.PracticeApi.dto.AvailabilityDto;
-import com.example.PracticeApi.entity.ProfessionalEntity;
-import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.service.AvailabilityService;
-import com.example.PracticeApi.service.ProfessionalService;
-import com.example.PracticeApi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,8 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AvailabilityController {
     private final AvailabilityService availabilityService;
-    private final ProfessionalService professionalService;
-    private final UserService userService;
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/user/me/save")
@@ -49,14 +43,12 @@ public class AvailabilityController {
 
     @GetMapping("/user/{id}")
     public ResponseEntity<List<AvailabilityDto>> getAnyUserAvailability(@PathVariable Long id){
-        UserEntity user = userService.getUserById(id);
-        return ResponseEntity.ok(availabilityService.getAnyUserAvailability(user));
+        return ResponseEntity.ok(availabilityService.getUserAvailabilityById(id));
     }
 
     @GetMapping("/professional/{id}")
     public ResponseEntity<List<AvailabilityDto>> getAnyProfessionalAvailability(@PathVariable Long id){
-        ProfessionalEntity professional = professionalService.getProfessionalById(id);
-        return ResponseEntity.ok(availabilityService.getAnyProfessionalAvailability(professional));
+        return ResponseEntity.ok(availabilityService.getAnyProfessionalAvailability(id));
     }
 
 }

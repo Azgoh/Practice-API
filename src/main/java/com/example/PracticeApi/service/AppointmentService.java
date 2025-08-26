@@ -4,7 +4,7 @@ import com.example.PracticeApi.dto.AppointmentRequestDto;
 import com.example.PracticeApi.dto.AppointmentResponseDto;
 import com.example.PracticeApi.entity.AppointmentEntity;
 import com.example.PracticeApi.entity.AvailabilityEntity;
-import com.example.PracticeApi.entity.UserEntity;
+import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.exception.ResourceNotFoundException;
 import com.example.PracticeApi.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,26 +17,25 @@ import java.util.List;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final UserService userService;
     private final AvailabilityService availabilityService;
     private final ProfessionalService professionalService;
 
-    public AppointmentResponseDto bookAppointment(AppointmentRequestDto appointmentRequestDto){
-        UserEntity user = userService.getAuthenticatedUser();
+    public AppointmentResponseDto bookAppointment(AppointmentRequestDto appointmentRequestDto) {
+        ProfessionalEntity professional = professionalService.getProfessionalById(appointmentRequestDto.getProfessionalId());
         List<AvailabilityEntity> availabilities = availabilityService.findAvailabilityByProfessionalIdAndDate(
                 appointmentRequestDto.getProfessionalId(), appointmentRequestDto.getDate()
         );
-       if(availabilities.isEmpty()){
-           throw new RuntimeException("No availability for this date");
-       }
+        if (availabilities.isEmpty()) {
+            throw new RuntimeException("No availability for this date");
+        }
         boolean fits = availabilities.stream().anyMatch(a ->
                 !appointmentRequestDto.getStartTime().isBefore(a.getStartTime()) &&
                         !appointmentRequestDto.getEndTime().isAfter(a.getEndTime())
         );
 
-       if(!fits){
-           throw new RuntimeException("Requested time is outside professional's availability");
-       }
+        if (!fits) {
+            throw new RuntimeException("Requested time is outside professional's availability");
+        }
 
         boolean conflict = appointmentRepository.existsByProfessionalIdAndDateAndTimeOverlap(
                 appointmentRequestDto.getProfessionalId(),
@@ -50,8 +49,8 @@ public class AppointmentService {
         }
 
         AppointmentEntity appointment = new AppointmentEntity();
-        appointment.setUser(user);
-        appointment.setProfessional(professionalService.getProfessionalById(appointmentRequestDto.getProfessionalId()));
+        appointment.setUser(professional.getUser());
+        appointment.setProfessional(professional);
         appointment.setDate(appointmentRequestDto.getDate());
         appointment.setStartTime(appointmentRequestDto.getStartTime());
         appointment.setEndTime(appointmentRequestDto.getEndTime());
@@ -68,7 +67,7 @@ public class AppointmentService {
 
     }
 
-    public AppointmentEntity findAppointmentById(Long appointmentId){
+    public AppointmentEntity findAppointmentById(Long appointmentId) {
         return appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
     }

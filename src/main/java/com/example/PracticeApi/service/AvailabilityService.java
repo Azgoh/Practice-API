@@ -22,9 +22,10 @@ public class AvailabilityService {
     private final AvailabilityRepository availabilityRepository;
     private final AvailabilityMapper availabilityMapper;
     private final UserService userService;
+    private final ProfessionalService professionalService;
 
     public List<AvailabilityDto> saveAvailabilitiesForProfessional(List<AvailabilityDto> dtos){
-        ProfessionalEntity professional = userService.getAuthenticatedProfessional();
+        ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
         List<AvailabilityEntity> availabilityEntities = dtos.stream()
                 .map(dto -> availabilityMapper.toEntityForProfessional(dto, professional))
                 .toList();
@@ -34,15 +35,15 @@ public class AvailabilityService {
     }
 
     public List<AvailabilityDto> getMyProfessionalAvailability(){
-        ProfessionalEntity professional = userService.getAuthenticatedProfessional();
+        ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
         return availabilityRepository.findByProfessionalIdOrderByDateAscStartTimeAsc(professional.getId())
                 .stream()
                 .map(availabilityMapper::toDto)
                 .toList();
     }
 
-    public List<AvailabilityDto> getAnyProfessionalAvailability(ProfessionalEntity professional){
-        return availabilityRepository.findByProfessionalIdOrderByDateAscStartTimeAsc(professional.getId()).stream()
+    public List<AvailabilityDto> getAnyProfessionalAvailability(Long professionalId){
+        return availabilityRepository.findByProfessionalIdOrderByDateAscStartTimeAsc(professionalId).stream()
                 .map(availabilityMapper::toDto)
                 .toList();
     }
@@ -129,8 +130,8 @@ public class AvailabilityService {
                 .toList();
     }
 
-    public List<AvailabilityDto> getAnyUserAvailability(UserEntity user){
-        return availabilityRepository.findByUser(user).stream()
+    public List<AvailabilityDto> getUserAvailabilityById(Long userId){
+        return availabilityRepository.findByUserIdOrderByDateAscStartTimeAsc(userId).stream()
                 .map(availabilityMapper::toDto)
                 .toList();
     }

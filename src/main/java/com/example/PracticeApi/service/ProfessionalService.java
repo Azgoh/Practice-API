@@ -10,7 +10,6 @@ import com.example.PracticeApi.repository.UserRepository;
 import com.example.PracticeApi.dto.ProfessionalRegisterDto;
 import com.example.PracticeApi.enumeration.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,13 +19,12 @@ import java.util.List;
 public class ProfessionalService {
     private final UserRepository userRepository;
     private final ProfessionalRepository professionalRepository;
+    private final UserService userService;
 
-    public ProfessionalEntity registerProfessional(ProfessionalRegisterDto dto){
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity user = userRepository.findByUsernameOrEmail(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public ProfessionalEntity registerProfessional(ProfessionalRegisterDto dto) {
+        UserEntity user = userService.getAuthenticatedUser();
 
-        if(professionalRepository.existsByUser(user)){
+        if (professionalRepository.existsByUser(user)) {
             throw new AlreadyExistsException("Professional profile already exists for user");
         }
 
@@ -40,22 +38,27 @@ public class ProfessionalService {
         professional.setPhone(dto.getPhone());
         professional.setHourlyRate(dto.getHourlyRate());
 
-        user.setRole(Role.PROFESSIONAL);
-        userRepository.save(user);
+        userService.updateUserRole(user, Role.PROFESSIONAL);
 
         return professionalRepository.save(professional);
     }
 
-    public ProfessionalEntity getProfessionalById(Long id){
+    public ProfessionalEntity getAuthenticatedProfessional() {
+        UserEntity user = userService.getAuthenticatedUser();
+        return professionalRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
+    }
+
+    public ProfessionalEntity getProfessionalById(Long id) {
         return professionalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
     }
 
-    public List<ProfessionalEntity> getAllProfessionals(){
+    public List<ProfessionalEntity> getAllProfessionals() {
         return professionalRepository.findAll();
     }
 
-    public List<ProfessionalEntity> searchProfessionals(String profession, String location){
+    public List<ProfessionalEntity> searchProfessionals(String profession, String location) {
         return professionalRepository.findByProfessionIgnoreCaseAndLocationIgnoreCase(profession, location);
     }
 

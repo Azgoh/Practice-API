@@ -1,15 +1,10 @@
 package com.example.PracticeApi.service;
 
-import com.example.PracticeApi.mapper.ProfessionalMapper;
-import com.example.PracticeApi.mapper.ReviewMapper;
 import com.example.PracticeApi.dto.*;
-import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.enumeration.AuthProvider;
 import com.example.PracticeApi.exception.AlreadyExistsException;
 import com.example.PracticeApi.exception.ResourceNotFoundException;
-import com.example.PracticeApi.mapper.UserMapper;
-import com.example.PracticeApi.repository.ProfessionalRepository;
 import com.example.PracticeApi.repository.UserRepository;
 import com.example.PracticeApi.enumeration.Role;
 import lombok.AllArgsConstructor;
@@ -30,20 +25,17 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ProfessionalRepository professionalRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    private final ProfessionalMapper professionalMapper;
-    private final UserMapper userMapper;
 
-    public void registerUser(RegisterRequestDto request){
-        if(userRepository.existsByUsername(request.getUsername())){
+    public void registerUser(RegisterRequestDto request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new AlreadyExistsException("Username exists");
         }
 
-        if(userRepository.existsByEmail((request.getEmail()))){
+        if (userRepository.existsByEmail((request.getEmail()))) {
             throw new AlreadyExistsException("Email already registered");
         }
 
@@ -64,9 +56,9 @@ public class UserService {
                 "link to verify your email: " + confirmationUrl);
     }
 
-    public String validateVerificationToken(String token){
+    public String validateVerificationToken(String token) {
         UserEntity user = userRepository.findByVerificationToken(token).orElse(null);
-        if(user == null){
+        if (user == null) {
             return "Invalid";
         }
         user.setEnabled(true);
@@ -74,16 +66,16 @@ public class UserService {
         return "Valid";
     }
 
-    public String loginUser(LoginRequestDto request){
+    public String loginUser(LoginRequestDto request) {
         String identifier = request.getIdentifier();
         UserEntity optUser = userRepository.findByUsernameOrEmail(identifier)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if(!optUser.isEnabled()){
+        if (!optUser.isEnabled()) {
             throw new DisabledException("Account is not enabled. Please verify your email");
         }
 
-        if(optUser.getAuthProvider() != AuthProvider.LOCAL){
+        if (optUser.getAuthProvider() != AuthProvider.LOCAL) {
             throw new IllegalStateException("This account is already registered via Google login");
         }
 
@@ -94,42 +86,25 @@ public class UserService {
         return jwtUtils.generateToken(authentication.getName());
     }
 
-    public UserEntity getAuthenticatedUser(){
+    public UserEntity getAuthenticatedUser() {
         String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsernameOrEmail(identifier)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public ProfessionalEntity getAuthenticatedProfessional(){
-        UserEntity user = getAuthenticatedUser();
-        return professionalRepository.findByUser(user)
-                .orElseThrow(() -> new ResourceNotFoundException("Professional not found"));
+    public void updateUserRole(UserEntity user, Role newRole) {
+        user.setRole(newRole);
+        userRepository.save(user);
     }
 
-    public UserEntity getUserById(Long id){
+
+    public UserEntity getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
-    public List<UserEntity> getAllUsers(){
+
+    public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
-    }
-
-    public UserWithProfessionalDto getCurrentUserWithProfessional(){
-        UserEntity user = getAuthenticatedUser();
-        UserDto userDto = userMapper.toDto(user);
-
-        ProfessionalDto profDto = null;
-        if (user.getRole() == Role.PROFESSIONAL) {
-            ProfessionalEntity professional = getAuthenticatedProfessional();
-            if (professional != null) {
-                profDto = professionalMapper.toDto(professional);
-            }
-        }
-
-        return new UserWithProfessionalDto(
-                userDto,
-                profDto
-        );
     }
 
     public void deleteAllUsers() {

@@ -5,7 +5,6 @@ import com.example.PracticeApi.dto.ProfessionalDto;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.service.ProfessionalService;
 import com.example.PracticeApi.dto.ProfessionalRegisterDto;
-import com.example.PracticeApi.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import java.util.List;
 public class ProfessionalController {
     private final ProfessionalService professionalService;
     private final ProfessionalMapper professionalMapper;
-    private final UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerProfessional(@Valid @RequestBody ProfessionalRegisterDto dto){
@@ -38,7 +36,7 @@ public class ProfessionalController {
 
     @GetMapping(value = "/me")
     public ResponseEntity<ProfessionalDto> getProfessionalByJwt(){
-        ProfessionalEntity professional = userService.getAuthenticatedProfessional();
+        ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
         ProfessionalDto dto = professionalMapper.toDto(professional);
         return ResponseEntity.ok(dto);
     }

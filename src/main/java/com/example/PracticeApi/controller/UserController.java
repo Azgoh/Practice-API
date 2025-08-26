@@ -3,6 +3,7 @@ package com.example.PracticeApi.controller;
 import com.example.PracticeApi.mapper.UserMapper;
 import com.example.PracticeApi.dto.*;
 import com.example.PracticeApi.entity.UserEntity;
+import com.example.PracticeApi.service.UserProfileService;
 import com.example.PracticeApi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,27 +31,28 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+    private final UserProfileService userProfileService;
 
     @Operation(summary = "Register a new user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registration successful"),
             @ApiResponse(responseCode = "400", description = "User already exists",
-            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequestDto request){
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequestDto request) {
         userService.registerUser(request);
         return ResponseEntity.ok("Registration successful. Please check your email to verify your account.");
     }
 
     @Operation(summary = "User email verification")
     @GetMapping(value = "/verify-email", produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> verifyEmail(@RequestParam("token") String token){
+    public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
         String result = userService.validateVerificationToken(token);
         String redirectUrl = "http://localhost:4200/verify-email";
-        if("Valid".equals(result)){
+        if ("Valid".equals(result)) {
             redirectUrl += "?status=success";
-        }else{
+        } else {
             redirectUrl += "?status=fail";
         }
         HttpHeaders headers = new HttpHeaders();
@@ -60,14 +62,14 @@ public class UserController {
 
     @Operation(summary = "Log in a user")
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request){
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {
         String token = userService.loginUser(request);
         return ResponseEntity.ok(token);
     }
 
     @Operation(summary = "Returns a list of all users")
     @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UserDto>> getAllUsers(){
+    public ResponseEntity<List<UserDto>> getAllUsers() {
 
         List<UserEntity> users = userService.getAllUsers();
         List<UserDto> dtos = users.stream()
@@ -79,7 +81,7 @@ public class UserController {
 
     @Operation(summary = "Returns a user based on their id")
     @GetMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDto> getUserById(@PathVariable long id){
+    public ResponseEntity<UserDto> getUserById(@PathVariable long id) {
         UserEntity user = userService.getUserById(id);
         UserDto dto = userMapper.toDto(user);
         return ResponseEntity.ok(dto);
@@ -87,7 +89,7 @@ public class UserController {
 
     @Operation(summary = "Returns the user's profile")
     @GetMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDto> getUserByJwt(){
+    public ResponseEntity<UserDto> getUserByJwt() {
         UserEntity user = userService.getAuthenticatedUser();
         UserDto dto = userMapper.toDto(user);
         return ResponseEntity.ok(dto);
@@ -103,8 +105,8 @@ public class UserController {
 
     @Operation(summary = "Returns the user and the professional profile")
     @GetMapping("/me")
-    public ResponseEntity<UserWithProfessionalDto> getMe(){
-        return ResponseEntity.ok(userService.getCurrentUserWithProfessional());
+    public ResponseEntity<UserWithProfessionalDto> getMe() {
+        return ResponseEntity.ok(userProfileService.getCurrentUserWithProfessional());
     }
 
 }

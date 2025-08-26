@@ -24,7 +24,7 @@ public class FileController {
 
     @Operation(summary = "Returns a list of all files")
     @GetMapping
-    public ResponseEntity<List<FileDto>> getAllFiles(){
+    public ResponseEntity<List<FileDto>> getAllFiles() {
         List<FileEntity> files = fileService.getAllFiles();
         List<FileDto> filesDto = files.stream()
                 .map(file -> new FileDto(file.getId(),
@@ -37,7 +37,7 @@ public class FileController {
 
     @Operation(summary = "Upload a file")
     @PostMapping("/upload")
-    public ResponseEntity<FileDto> uploadFile(@RequestParam("file") MultipartFile file) throws Exception{
+    public ResponseEntity<FileDto> uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
         FileDto savedFile = fileService.storeFile(file);
         return ResponseEntity.ok(savedFile);
 
@@ -45,7 +45,7 @@ public class FileController {
 
     @Operation(summary = "Download a file based on its id")
     @GetMapping("/download/{id}")
-    public ResponseEntity<byte[]> getFile(@PathVariable Long id) throws Exception{
+    public ResponseEntity<byte[]> getFile(@PathVariable Long id) throws Exception {
         FileEntity fileEntity = fileService.getFileById(id);
 
         return ResponseEntity.ok()
@@ -57,7 +57,7 @@ public class FileController {
 
     @Operation(summary = "Get a file based on its id")
     @GetMapping("/{id}")
-    public ResponseEntity<FileDto> getFileById(@PathVariable Long id){
+    public ResponseEntity<FileDto> getFileById(@PathVariable Long id) {
         FileEntity file = fileService.getFileById(id);
         FileDto dto = new FileDto(
                 file.getId(),
@@ -73,7 +73,7 @@ public class FileController {
     @Operation(summary = "Delete a file based on its id. Must be an admin")
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteFile(@PathVariable Long id){
+    public ResponseEntity<String> deleteFile(@PathVariable Long id) {
         fileService.deleteFileById(id);
         return ResponseEntity.ok("File deleted successfully");
     }

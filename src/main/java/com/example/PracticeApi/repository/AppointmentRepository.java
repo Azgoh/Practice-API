@@ -23,4 +23,6 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
             LocalTime endTime
     );
 
+    Optional<AppointmentEntity> findById(Long id);
+
 }

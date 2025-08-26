@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface ProfessionalRepository extends JpaRepository<ProfessionalEntity, Long> {
 
-    Optional<ProfessionalEntity> findByUserId(Long id);
-
     List<ProfessionalEntity> findByProfessionIgnoreCase(String profession);
     List<ProfessionalEntity> findByProfessionIgnoreCaseAndLocationIgnoreCase(String profession, String location);
 

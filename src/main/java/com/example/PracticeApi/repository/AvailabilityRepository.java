@@ -15,4 +15,6 @@ public interface AvailabilityRepository extends JpaRepository<AvailabilityEntity
     List<AvailabilityEntity> findByUser(UserEntity user);
     List<AvailabilityEntity> findByProfessional(ProfessionalEntity professional);
     List<AvailabilityEntity> findByProfessionalIdAndDate(Long professionalId, LocalDate date);
+    List<AvailabilityEntity> findByProfessionalIdOrderByDateAscStartTimeAsc(Long professionalId);
+
 }

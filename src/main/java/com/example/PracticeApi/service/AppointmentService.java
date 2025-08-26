@@ -7,9 +7,6 @@ import com.example.PracticeApi.entity.AvailabilityEntity;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.exception.ResourceNotFoundException;
 import com.example.PracticeApi.repository.AppointmentRepository;
-import com.example.PracticeApi.repository.AvailabilityRepository;
-import com.example.PracticeApi.repository.ProfessionalRepository;
-import com.example.PracticeApi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +17,13 @@ import java.util.List;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final AvailabilityRepository availabilityRepository;
-    private final ProfessionalRepository professionalRepository;
     private final UserService userService;
+    private final AvailabilityService availabilityService;
+    private final ProfessionalService professionalService;
 
     public AppointmentResponseDto bookAppointment(AppointmentRequestDto appointmentRequestDto){
         UserEntity user = userService.getAuthenticatedUser();
-        List<AvailabilityEntity> availabilities = availabilityRepository.findByProfessionalIdAndDate(
+        List<AvailabilityEntity> availabilities = availabilityService.findAvailabilityByProfessionalIdAndDate(
                 appointmentRequestDto.getProfessionalId(), appointmentRequestDto.getDate()
         );
        if(availabilities.isEmpty()){
@@ -54,13 +51,14 @@ public class AppointmentService {
 
         AppointmentEntity appointment = new AppointmentEntity();
         appointment.setUser(user);
-        appointment.setProfessional(professionalRepository.findById(appointmentRequestDto.getProfessionalId())
-                .orElseThrow(() -> new ResourceNotFoundException("Professional not found")));
+        appointment.setProfessional(professionalService.getProfessionalById(appointmentRequestDto.getProfessionalId()));
         appointment.setDate(appointmentRequestDto.getDate());
         appointment.setStartTime(appointmentRequestDto.getStartTime());
         appointment.setEndTime(appointmentRequestDto.getEndTime());
 
         AppointmentEntity saved = appointmentRepository.save(appointment);
+
+        availabilityService.updateProfessionalAvailabilityOnAppointmentEvent(appointmentRequestDto, saved);
 
         return new AppointmentResponseDto(saved.getId(),
                 appointmentRequestDto.getDate(),
@@ -68,5 +66,10 @@ public class AppointmentService {
                 appointmentRequestDto.getEndTime(),
                 "Appointment booked successfully");
 
+    }
+
+    public AppointmentEntity findAppointmentById(Long appointmentId){
+        return appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
     }
 }

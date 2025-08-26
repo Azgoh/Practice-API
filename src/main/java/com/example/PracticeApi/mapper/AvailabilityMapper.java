@@ -7,7 +7,6 @@ import com.example.PracticeApi.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
 
 @Component
 @RequiredArgsConstructor

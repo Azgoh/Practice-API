@@ -3,6 +3,7 @@ package com.example.PracticeApi.controller;
 import com.example.PracticeApi.dto.AvailabilityBatchDto;
 import com.example.PracticeApi.dto.AvailabilityDto;
 import com.example.PracticeApi.service.AvailabilityService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/availability")
 @RequiredArgsConstructor
+@Tag(name = "Availability Controller", description = "Endpoints for availability management")
 public class AvailabilityController {
     private final AvailabilityService availabilityService;
 

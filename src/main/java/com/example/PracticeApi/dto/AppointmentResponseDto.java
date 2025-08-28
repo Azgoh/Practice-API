@@ -1,5 +1,6 @@
 package com.example.PracticeApi.dto;
 
+import com.example.PracticeApi.enumeration.AppointmentStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,4 +19,5 @@ public class AppointmentResponseDto {
     private LocalTime startTime;
     private LocalTime endTime;
     private String message;
+    private AppointmentStatus appointmentStatus;
 }

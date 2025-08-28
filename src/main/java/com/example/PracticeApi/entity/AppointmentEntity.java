@@ -1,5 +1,6 @@
 package com.example.PracticeApi.entity;
 
+import com.example.PracticeApi.enumeration.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,4 +35,7 @@ public class AppointmentEntity {
 
     @Column(nullable = false)
     private LocalTime endTime;
+
+    @Column(nullable = false)
+    private AppointmentStatus appointmentStatus;
 }

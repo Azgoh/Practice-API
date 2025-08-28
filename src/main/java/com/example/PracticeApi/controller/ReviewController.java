@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(name = "Review Controller", description = "Endpoints for rating management")
+@Tag(name = "Review Controller", description = "Endpoints for review management")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/reviews")

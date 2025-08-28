@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/appointments")
 @RequiredArgsConstructor
@@ -26,5 +28,22 @@ public class AppointmentController {
     @PostMapping("/cancel/{id}")
     public ResponseEntity<AppointmentResponseDto> cancelAppointment(@PathVariable Long id){
         return ResponseEntity.ok(appointmentService.cancelAppointment(id));
+    }
+
+    @GetMapping("/get-appointment/{id}")
+    public ResponseEntity<AppointmentResponseDto> getAppointmentById(@PathVariable Long id){
+        return ResponseEntity.ok(appointmentService.getAppointmentById(id));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/my-user-appointments")
+    public ResponseEntity<List<AppointmentResponseDto>> getAppointmentsForUser(){
+        return ResponseEntity.ok(appointmentService.getMyUserAppointments());
+    }
+
+    @PreAuthorize("hasRole('PROFESSIONAL')")
+    @GetMapping("/my-professional-appointments")
+    public ResponseEntity<List<AppointmentResponseDto>> getAppointmentsForProfessional(){
+        return ResponseEntity.ok(appointmentService.getMyProfessionalAppointments());
     }
 }

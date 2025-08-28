@@ -73,7 +73,7 @@ public class AppointmentService {
 
     }
 
-    public AppointmentResponseDto cancelAppointment(Long id){
+    public AppointmentResponseDto cancelAppointment(Long id) {
         AppointmentEntity appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
@@ -89,5 +89,50 @@ public class AppointmentService {
                 "The appointment has been cancelled",
                 appointment.getAppointmentStatus());
     }
+
+    public AppointmentResponseDto getAppointmentById(Long id) {
+        AppointmentEntity appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+
+        return new AppointmentResponseDto(appointment.getId(),
+                appointment.getDate(),
+                appointment.getStartTime(),
+                appointment.getEndTime(),
+                "",
+                appointment.getAppointmentStatus());
+    }
+
+    public List<AppointmentResponseDto> getMyUserAppointments() {
+        UserEntity user = userService.getAuthenticatedUser();
+        List<AppointmentEntity> appointmentEntities = appointmentRepository.findByUser(user);
+
+        return appointmentEntities.stream()
+                .map(appointment -> new AppointmentResponseDto(
+                        appointment.getId(),
+                        appointment.getDate(),
+                        appointment.getStartTime(),
+                        appointment.getEndTime(),
+                        "",
+                        appointment.getAppointmentStatus()
+                ))
+                .toList();
+    }
+
+    public List<AppointmentResponseDto> getMyProfessionalAppointments(){
+        ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
+        List<AppointmentEntity> appointmentEntities = appointmentRepository.findByProfessional(professional);
+
+        return appointmentEntities.stream()
+                .map(appointment -> new AppointmentResponseDto(
+                        appointment.getId(),
+                        appointment.getDate(),
+                        appointment.getStartTime(),
+                        appointment.getEndTime(),
+                        "",
+                        appointment.getAppointmentStatus()
+                ))
+                .toList();
+    }
+
 
 }

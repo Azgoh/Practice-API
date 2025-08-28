@@ -1,12 +1,15 @@
 package com.example.PracticeApi.repository;
 
 import com.example.PracticeApi.entity.AppointmentEntity;
+import com.example.PracticeApi.entity.ProfessionalEntity;
+import com.example.PracticeApi.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,5 +27,9 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
     );
 
     Optional<AppointmentEntity> findById(Long id);
+
+    List<AppointmentEntity> findByUser(UserEntity user);
+
+    List<AppointmentEntity> findByProfessional(ProfessionalEntity professional);
 
 }

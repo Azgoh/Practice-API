@@ -8,10 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -22,7 +19,12 @@ public class AppointmentController {
 
     @PostMapping("/book")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<AppointmentResponseDto> book(@Valid @RequestBody AppointmentRequestDto request) {
+    public ResponseEntity<AppointmentResponseDto> bookAppointment(@Valid @RequestBody AppointmentRequestDto request) {
         return ResponseEntity.ok(appointmentService.bookAppointment(request));
+    }
+
+    @PostMapping("/cancel/{id}")
+    public ResponseEntity<AppointmentResponseDto> cancelAppointment(@PathVariable Long id){
+        return ResponseEntity.ok(appointmentService.cancelAppointment(id));
     }
 }

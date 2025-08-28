@@ -48,13 +48,12 @@ public class AvailabilityService {
                 .toList();
     }
 
-    public void updateProfessionalAvailabilityOnAppointmentEvent(AppointmentRequestDto appointmentRequestDto,
-                                                                 AppointmentEntity appointment){
+    public void updateProfessionalAvailabilityOnAppointmentBooking(AppointmentRequestDto appointmentRequestDto){
         List<AvailabilityEntity> availabilitiesForAppointmentDay = availabilityRepository
                 .findByProfessionalIdAndDate(appointmentRequestDto.getProfessionalId(), appointmentRequestDto.getDate());
 
-        LocalTime appointmentStartTime = appointment.getStartTime();
-        LocalTime appointmentEndTime = appointment.getEndTime();
+        LocalTime appointmentStartTime = appointmentRequestDto.getStartTime();
+        LocalTime appointmentEndTime = appointmentRequestDto.getEndTime();
 
         List<AvailabilityEntity> updatedAvailabilities = new ArrayList<>();
 
@@ -102,6 +101,64 @@ public class AvailabilityService {
         }
 
         availabilityRepository.saveAll(updatedAvailabilities);
+
+    }
+
+    public void updateProfessionalAvailabilityOnAppointmentCancellation(AppointmentEntity appointment){
+        LocalDate appointmentDate = appointment.getDate();
+        LocalTime appointmentStartTime = appointment.getStartTime();
+        LocalTime appointmentEndTime = appointment.getEndTime();
+        Long professionalId = appointment.getProfessional().getId();
+
+        List<AvailabilityEntity> availabilitiesForAppointmentDay = availabilityRepository
+                .findByProfessionalIdAndDate(professionalId, appointmentDate);
+
+        // Find slot ending right before appointment start
+
+        AvailabilityEntity left = availabilitiesForAppointmentDay.stream()
+                .filter(a -> a.getEndTime().equals(appointmentStartTime))
+                .findFirst()
+                .orElse(null);
+
+        // Find slot starting right after appointment end
+
+        AvailabilityEntity right = availabilitiesForAppointmentDay.stream()
+                .filter(a -> a.getStartTime().equals(appointmentEndTime))
+                .findFirst()
+                .orElse(null);
+
+        // Check if both neighbours are touched and extend left slot + appointment + right slot, delete right slot
+
+        if (left != null && right != null) {
+            left.setEndTime(right.getEndTime());
+            availabilityRepository.delete(right);
+        }
+
+        // Check if only left slot is touched, extend left slot + appointment
+
+        else if (left != null) {
+            left.setEndTime(appointmentEndTime);
+        }
+
+        // Check if only right slot is touched, extend appointment + right slot
+
+        else if (right != null) {
+            right.setStartTime(appointmentStartTime);
+        }
+
+        // If both left and right are null, create new availability slot
+
+        else {
+            AvailabilityEntity restored = new AvailabilityEntity();
+            restored.setDate(appointmentDate);
+            restored.setStartTime(appointmentStartTime);
+            restored.setEndTime(appointmentEndTime);
+            restored.setProfessional(appointment.getProfessional());
+            availabilityRepository.save(restored);
+            return;
+        }
+
+        availabilityRepository.flush();
 
     }
 

@@ -1,7 +1,8 @@
 package com.example.PracticeApi.service;
 
 import com.example.PracticeApi.dto.AppointmentRequestDto;
-import com.example.PracticeApi.dto.AvailabilityDto;
+import com.example.PracticeApi.dto.AvailabilityRequestDto;
+import com.example.PracticeApi.dto.AvailabilityResponseDto;
 import com.example.PracticeApi.entity.AppointmentEntity;
 import com.example.PracticeApi.entity.AvailabilityEntity;
 import com.example.PracticeApi.entity.ProfessionalEntity;
@@ -24,27 +25,27 @@ public class AvailabilityService {
     private final UserService userService;
     private final ProfessionalService professionalService;
 
-    public List<AvailabilityDto> saveAvailabilitiesForProfessional(List<AvailabilityDto> dtos){
+    public List<AvailabilityResponseDto> saveAvailabilitiesForProfessional(List<AvailabilityRequestDto> dtos){
         ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
         List<AvailabilityEntity> availabilityEntities = dtos.stream()
                 .map(dto -> availabilityMapper.toEntityForProfessional(dto, professional))
                 .toList();
         List<AvailabilityEntity> savedEntities = availabilityRepository.saveAll(availabilityEntities);
 
-        return savedEntities.stream().map(availabilityMapper::toDto).toList();
+        return savedEntities.stream().map(availabilityMapper::toAvailabilityResponseDto).toList();
     }
 
-    public List<AvailabilityDto> getMyProfessionalAvailability(){
+    public List<AvailabilityResponseDto> getMyProfessionalAvailability(){
         ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
         return availabilityRepository.findByProfessionalIdOrderByDateAscStartTimeAsc(professional.getId())
                 .stream()
-                .map(availabilityMapper::toDto)
+                .map(availabilityMapper::toAvailabilityResponseDto)
                 .toList();
     }
 
-    public List<AvailabilityDto> getProfessionalAvailabilityById(Long professionalId){
+    public List<AvailabilityResponseDto> getProfessionalAvailabilityById(Long professionalId){
         return availabilityRepository.findByProfessionalIdOrderByDateAscStartTimeAsc(professionalId).stream()
-                .map(availabilityMapper::toDto)
+                .map(availabilityMapper::toAvailabilityResponseDto)
                 .toList();
     }
 
@@ -168,7 +169,7 @@ public class AvailabilityService {
 
     // Might be useful for filtering professionals depending on the overlapping availability with the user.
 
-    public List<AvailabilityDto> saveAvailabilitiesForUser(List<AvailabilityDto> dtos){
+    public List<AvailabilityResponseDto> saveAvailabilitiesForUser(List<AvailabilityRequestDto> dtos){
         UserEntity user = userService.getAuthenticatedUser();
 
         List<AvailabilityEntity> availabilityEntities = dtos.stream()
@@ -177,19 +178,19 @@ public class AvailabilityService {
 
         List<AvailabilityEntity> savedEntities = availabilityRepository.saveAll(availabilityEntities);
 
-        return savedEntities.stream().map(availabilityMapper::toDto).toList();
+        return savedEntities.stream().map(availabilityMapper::toAvailabilityResponseDto).toList();
     }
 
-    public List<AvailabilityDto> getMyUserAvailability(){
+    public List<AvailabilityResponseDto> getMyUserAvailability(){
         UserEntity user = userService.getAuthenticatedUser();
         return availabilityRepository.findByUser(user).stream()
-                .map(availabilityMapper::toDto)
+                .map(availabilityMapper::toAvailabilityResponseDto)
                 .toList();
     }
 
-    public List<AvailabilityDto> getUserAvailabilityById(Long userId){
+    public List<AvailabilityResponseDto> getUserAvailabilityById(Long userId){
         return availabilityRepository.findByUserIdOrderByDateAscStartTimeAsc(userId).stream()
-                .map(availabilityMapper::toDto)
+                .map(availabilityMapper::toAvailabilityResponseDto)
                 .toList();
     }
 }

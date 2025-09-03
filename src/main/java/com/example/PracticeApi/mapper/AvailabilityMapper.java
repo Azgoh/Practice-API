@@ -1,6 +1,7 @@
 package com.example.PracticeApi.mapper;
 
-import com.example.PracticeApi.dto.AvailabilityDto;
+import com.example.PracticeApi.dto.AvailabilityRequestDto;
+import com.example.PracticeApi.dto.AvailabilityResponseDto;
 import com.example.PracticeApi.entity.AvailabilityEntity;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.UserEntity;
@@ -12,29 +13,30 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AvailabilityMapper {
 
-    public AvailabilityDto toDto(AvailabilityEntity availabilityEntity){
-        return new AvailabilityDto(
+    public AvailabilityResponseDto toAvailabilityResponseDto(AvailabilityEntity availabilityEntity){
+        return new AvailabilityResponseDto(
+                availabilityEntity.getId(),
                 availabilityEntity.getDate(),
                 availabilityEntity.getStartTime(),
                 availabilityEntity.getEndTime()
         );
     }
 
-    public AvailabilityEntity toEntity(AvailabilityDto availabilityDto, UserEntity user){
+    public AvailabilityEntity toEntity(AvailabilityRequestDto availabilityRequestDto, UserEntity user){
         AvailabilityEntity availabilityEntity = new AvailabilityEntity();
         availabilityEntity.setUser(user);
-        availabilityEntity.setDate(availabilityDto.getDate());
-        availabilityEntity.setStartTime(availabilityDto.getStartTime());
-        availabilityEntity.setEndTime(availabilityDto.getEndTime());
+        availabilityEntity.setDate(availabilityRequestDto.getDate());
+        availabilityEntity.setStartTime(availabilityRequestDto.getStartTime());
+        availabilityEntity.setEndTime(availabilityRequestDto.getEndTime());
         return availabilityEntity;
     }
 
-    public AvailabilityEntity toEntityForProfessional(AvailabilityDto availabilityDto, ProfessionalEntity professional){
+    public AvailabilityEntity toEntityForProfessional(AvailabilityRequestDto availabilityRequestDto, ProfessionalEntity professional){
         AvailabilityEntity availabilityEntity = new AvailabilityEntity();
         availabilityEntity.setProfessional(professional);
-        availabilityEntity.setDate(availabilityDto.getDate());
-        availabilityEntity.setStartTime(availabilityDto.getStartTime());
-        availabilityEntity.setEndTime(availabilityDto.getEndTime());
+        availabilityEntity.setDate(availabilityRequestDto.getDate());
+        availabilityEntity.setStartTime(availabilityRequestDto.getStartTime());
+        availabilityEntity.setEndTime(availabilityRequestDto.getEndTime());
         return availabilityEntity;
     }
 }

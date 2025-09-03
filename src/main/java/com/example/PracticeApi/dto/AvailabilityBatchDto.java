@@ -15,5 +15,5 @@ public class AvailabilityBatchDto {
 
     @Valid
     @NotEmpty(message = "At least one availability is required")
-    private List<AvailabilityDto> availabilities;
+    private List<AvailabilityRequestDto> availabilities;
 }

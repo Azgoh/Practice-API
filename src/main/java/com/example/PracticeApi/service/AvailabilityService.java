@@ -3,10 +3,12 @@ package com.example.PracticeApi.service;
 import com.example.PracticeApi.dto.AppointmentRequestDto;
 import com.example.PracticeApi.dto.AvailabilityRequestDto;
 import com.example.PracticeApi.dto.AvailabilityResponseDto;
+import com.example.PracticeApi.dto.ExistingAvailabilityRequestDto;
 import com.example.PracticeApi.entity.AppointmentEntity;
 import com.example.PracticeApi.entity.AvailabilityEntity;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.UserEntity;
+import com.example.PracticeApi.exception.ResourceNotFoundException;
 import com.example.PracticeApi.mapper.AvailabilityMapper;
 import com.example.PracticeApi.repository.AvailabilityRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,18 @@ public class AvailabilityService {
     public AvailabilityResponseDto saveAvailabilityForProfessional(AvailabilityRequestDto availabilityRequestDto){
         ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
         AvailabilityEntity availabilityEntity = availabilityMapper.toEntityForProfessional(availabilityRequestDto, professional);
+        availabilityRepository.save(availabilityEntity);
+
+        return availabilityMapper.toAvailabilityResponseDto(availabilityEntity);
+    }
+
+    public AvailabilityResponseDto editExistingAvailabilityForProfessional(ExistingAvailabilityRequestDto existingAvailabilityRequestDto){
+        AvailabilityEntity availabilityEntity = availabilityRepository.findById(existingAvailabilityRequestDto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Availability slot not found"));
+        availabilityEntity.setTitle(existingAvailabilityRequestDto.getTitle());
+        availabilityEntity.setDate(existingAvailabilityRequestDto.getDate());
+        availabilityEntity.setStartTime(existingAvailabilityRequestDto.getStartTime());
+        availabilityEntity.setEndTime(existingAvailabilityRequestDto.getEndTime());
         availabilityRepository.save(availabilityEntity);
 
         return availabilityMapper.toAvailabilityResponseDto(availabilityEntity);

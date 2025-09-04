@@ -3,6 +3,7 @@ package com.example.PracticeApi.controller;
 import com.example.PracticeApi.dto.AvailabilityBatchDto;
 import com.example.PracticeApi.dto.AvailabilityRequestDto;
 import com.example.PracticeApi.dto.AvailabilityResponseDto;
+import com.example.PracticeApi.dto.ExistingAvailabilityRequestDto;
 import com.example.PracticeApi.service.AvailabilityService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,6 +26,12 @@ public class AvailabilityController {
     @PostMapping("/professional/me/save")
     public ResponseEntity<AvailabilityResponseDto> saveAvailabilityForProfessional(@Valid @RequestBody AvailabilityRequestDto availabilityRequestDto){
         return ResponseEntity.ok(availabilityService.saveAvailabilityForProfessional(availabilityRequestDto));
+    }
+
+    @PreAuthorize("hasRole('PROFESSIONAL')")
+    @PutMapping("/professional/edit")
+    public ResponseEntity<AvailabilityResponseDto> editAvailabilitySlotForProfessional(@Valid @RequestBody ExistingAvailabilityRequestDto existingAvailabilityRequestDto){
+        return ResponseEntity.ok(availabilityService.editExistingAvailabilityForProfessional(existingAvailabilityRequestDto));
     }
 
     @PreAuthorize("hasRole('PROFESSIONAL')")

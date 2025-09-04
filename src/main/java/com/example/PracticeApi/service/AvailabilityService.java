@@ -65,9 +65,9 @@ public class AvailabilityService {
             // Appointment start > slot start && appointment end < slot end
 
             if(appointmentStartTime.isAfter(slotStartTime) && appointmentEndTime.isBefore(slotEndTime)){
-                AvailabilityEntity before = new AvailabilityEntity(null, null, slot.getProfessional(),
+                AvailabilityEntity before = new AvailabilityEntity(null, null, slot.getProfessional(), "_",
                         appointmentRequestDto.getDate(), slotStartTime, appointmentStartTime);
-                AvailabilityEntity after = new AvailabilityEntity(null, null, slot.getProfessional(),
+                AvailabilityEntity after = new AvailabilityEntity(null, null, slot.getProfessional(), "_",
                         appointmentRequestDto.getDate(), appointmentEndTime, slotEndTime);
                 availabilityRepository.delete(slot);
                 updatedAvailabilities.addAll(List.of(before, after));

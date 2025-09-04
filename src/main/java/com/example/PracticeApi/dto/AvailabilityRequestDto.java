@@ -2,6 +2,7 @@ package com.example.PracticeApi.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +15,8 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AvailabilityRequestDto {
+    @NotBlank(message = "Title is required")
+    private String title;
     @NotNull(message = "Date cannot be null")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "d MMMM yyyy")
     private LocalDate date;

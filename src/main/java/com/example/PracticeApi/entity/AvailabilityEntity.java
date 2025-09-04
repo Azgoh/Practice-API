@@ -27,6 +27,9 @@ public class AvailabilityEntity {
     private ProfessionalEntity professional;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private LocalDate date;
 
     @Column(nullable = false)

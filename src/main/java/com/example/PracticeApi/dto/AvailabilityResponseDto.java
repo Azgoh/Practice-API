@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class AvailabilityResponseDto {
     private Long id;
+    private String title;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "d MMMM yyyy")
     private LocalDate date;
     private LocalTime startTime;

@@ -16,6 +16,7 @@ public class AvailabilityMapper {
     public AvailabilityResponseDto toAvailabilityResponseDto(AvailabilityEntity availabilityEntity){
         return new AvailabilityResponseDto(
                 availabilityEntity.getId(),
+                availabilityEntity.getTitle(),
                 availabilityEntity.getDate(),
                 availabilityEntity.getStartTime(),
                 availabilityEntity.getEndTime()
@@ -25,6 +26,7 @@ public class AvailabilityMapper {
     public AvailabilityEntity toEntity(AvailabilityRequestDto availabilityRequestDto, UserEntity user){
         AvailabilityEntity availabilityEntity = new AvailabilityEntity();
         availabilityEntity.setUser(user);
+        availabilityEntity.setTitle(availabilityRequestDto.getTitle());
         availabilityEntity.setDate(availabilityRequestDto.getDate());
         availabilityEntity.setStartTime(availabilityRequestDto.getStartTime());
         availabilityEntity.setEndTime(availabilityRequestDto.getEndTime());
@@ -34,6 +36,7 @@ public class AvailabilityMapper {
     public AvailabilityEntity toEntityForProfessional(AvailabilityRequestDto availabilityRequestDto, ProfessionalEntity professional){
         AvailabilityEntity availabilityEntity = new AvailabilityEntity();
         availabilityEntity.setProfessional(professional);
+        availabilityEntity.setTitle(availabilityRequestDto.getTitle());
         availabilityEntity.setDate(availabilityRequestDto.getDate());
         availabilityEntity.setStartTime(availabilityRequestDto.getStartTime());
         availabilityEntity.setEndTime(availabilityRequestDto.getEndTime());

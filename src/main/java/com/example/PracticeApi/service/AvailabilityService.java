@@ -25,14 +25,12 @@ public class AvailabilityService {
     private final UserService userService;
     private final ProfessionalService professionalService;
 
-    public List<AvailabilityResponseDto> saveAvailabilitiesForProfessional(List<AvailabilityRequestDto> dtos){
+    public AvailabilityResponseDto saveAvailabilityForProfessional(AvailabilityRequestDto availabilityRequestDto){
         ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
-        List<AvailabilityEntity> availabilityEntities = dtos.stream()
-                .map(dto -> availabilityMapper.toEntityForProfessional(dto, professional))
-                .toList();
-        List<AvailabilityEntity> savedEntities = availabilityRepository.saveAll(availabilityEntities);
+        AvailabilityEntity availabilityEntity = availabilityMapper.toEntityForProfessional(availabilityRequestDto, professional);
+        availabilityRepository.save(availabilityEntity);
 
-        return savedEntities.stream().map(availabilityMapper::toAvailabilityResponseDto).toList();
+        return availabilityMapper.toAvailabilityResponseDto(availabilityEntity);
     }
 
     public List<AvailabilityResponseDto> getMyProfessionalAvailability(){

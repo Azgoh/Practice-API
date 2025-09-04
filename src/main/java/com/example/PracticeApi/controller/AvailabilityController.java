@@ -23,8 +23,8 @@ public class AvailabilityController {
 
     @PreAuthorize("hasRole('PROFESSIONAL')")
     @PostMapping("/professional/me/save")
-    public ResponseEntity<List<AvailabilityResponseDto>> addAvailabilitiesForProfessional(@Valid @RequestBody AvailabilityBatchDto batchDto){
-        return ResponseEntity.ok(availabilityService.saveAvailabilitiesForProfessional(batchDto.getAvailabilities()));
+    public ResponseEntity<AvailabilityResponseDto> saveAvailabilityForProfessional(@Valid @RequestBody AvailabilityRequestDto availabilityRequestDto){
+        return ResponseEntity.ok(availabilityService.saveAvailabilityForProfessional(availabilityRequestDto));
     }
 
     @PreAuthorize("hasRole('PROFESSIONAL')")

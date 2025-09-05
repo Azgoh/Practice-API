@@ -35,6 +35,12 @@ public class AvailabilityController {
     }
 
     @PreAuthorize("hasRole('PROFESSIONAL')")
+    @DeleteMapping("/professional/delete/{id}")
+    public void deleteAvailabilitySlotForProfessional(@PathVariable Long id){
+        availabilityService.deleteAvailabilitySlotForProfessional(id);
+    }
+
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     @GetMapping("/professional/me")
     public ResponseEntity<List<AvailabilityResponseDto>> getMyProfessionalAvailability(){
         return ResponseEntity.ok(availabilityService.getMyProfessionalAvailability());

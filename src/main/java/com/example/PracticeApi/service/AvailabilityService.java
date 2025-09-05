@@ -47,6 +47,10 @@ public class AvailabilityService {
         return availabilityMapper.toAvailabilityResponseDto(availabilityEntity);
     }
 
+    public void deleteAvailabilitySlotForProfessional(Long id){
+        availabilityRepository.deleteById(id);
+    }
+
     public List<AvailabilityResponseDto> getMyProfessionalAvailability(){
         ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
         return availabilityRepository.findByProfessionalIdOrderByDateAscStartTimeAsc(professional.getId())

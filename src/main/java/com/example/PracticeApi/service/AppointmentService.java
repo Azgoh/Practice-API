@@ -7,6 +7,7 @@ import com.example.PracticeApi.entity.AvailabilityEntity;
 import com.example.PracticeApi.entity.ProfessionalEntity;
 import com.example.PracticeApi.entity.UserEntity;
 import com.example.PracticeApi.enumeration.AppointmentStatus;
+import com.example.PracticeApi.enumeration.Role;
 import com.example.PracticeApi.exception.ResourceNotFoundException;
 import com.example.PracticeApi.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -65,11 +66,15 @@ public class AppointmentService {
         availabilityService.updateProfessionalAvailabilityOnAppointmentBooking(appointmentRequestDto);
 
         return new AppointmentResponseDto(saved.getId(),
-                appointmentRequestDto.getDate(),
-                appointmentRequestDto.getStartTime(),
-                appointmentRequestDto.getEndTime(),
+                saved.getDate(),
+                saved.getStartTime(),
+                saved.getEndTime(),
                 "Appointment booked successfully",
-                AppointmentStatus.BOOKED);
+                AppointmentStatus.BOOKED,
+                saved.getProfessional().getId(),
+                saved.getProfessional().getFirstName() + " " + saved.getProfessional().getLastName(),
+                saved.getUser().getId(),
+                saved.getUser().getUsername());
 
     }
 
@@ -87,7 +92,11 @@ public class AppointmentService {
                 appointment.getStartTime(),
                 appointment.getEndTime(),
                 "The appointment has been cancelled",
-                appointment.getAppointmentStatus());
+                appointment.getAppointmentStatus(),
+                appointment.getProfessional().getId(),
+                appointment.getProfessional().getPhone() + " " + appointment.getProfessional().getLastName(),
+                appointment.getUser().getId(),
+                appointment.getUser().getUsername());
     }
 
     public AppointmentResponseDto getAppointmentById(Long id) {
@@ -99,12 +108,25 @@ public class AppointmentService {
                 appointment.getStartTime(),
                 appointment.getEndTime(),
                 "",
-                appointment.getAppointmentStatus());
+                appointment.getAppointmentStatus(),
+                appointment.getProfessional().getId(),
+                appointment.getProfessional().getFirstName() + " " + appointment.getProfessional().getLastName(),
+                appointment.getUser().getId(),
+                appointment.getUser().getUsername()
+                );
     }
 
-    public List<AppointmentResponseDto> getMyUserAppointments() {
+    public List<AppointmentResponseDto> getMyAppointments() {
         UserEntity user = userService.getAuthenticatedUser();
-        List<AppointmentEntity> appointmentEntities = appointmentRepository.findByUser(user);
+
+        List<AppointmentEntity> appointmentEntities;
+
+        if(user.getRole() == Role.PROFESSIONAL){
+           ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
+           appointmentEntities = appointmentRepository.findByProfessional(professional);
+        } else {
+            appointmentEntities = appointmentRepository.findByUser(user);
+        }
 
         return appointmentEntities.stream()
                 .map(appointment -> new AppointmentResponseDto(
@@ -113,26 +135,13 @@ public class AppointmentService {
                         appointment.getStartTime(),
                         appointment.getEndTime(),
                         "",
-                        appointment.getAppointmentStatus()
+                        appointment.getAppointmentStatus(),
+                        appointment.getProfessional().getId(),
+                        appointment.getProfessional().getFirstName() + " " + appointment.getProfessional().getLastName(),
+                        appointment.getUser().getId(),
+                        appointment.getUser().getUsername()
                 ))
                 .toList();
     }
-
-    public List<AppointmentResponseDto> getMyProfessionalAppointments(){
-        ProfessionalEntity professional = professionalService.getAuthenticatedProfessional();
-        List<AppointmentEntity> appointmentEntities = appointmentRepository.findByProfessional(professional);
-
-        return appointmentEntities.stream()
-                .map(appointment -> new AppointmentResponseDto(
-                        appointment.getId(),
-                        appointment.getDate(),
-                        appointment.getStartTime(),
-                        appointment.getEndTime(),
-                        "",
-                        appointment.getAppointmentStatus()
-                ))
-                .toList();
-    }
-
 
 }

@@ -20,7 +20,6 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @PostMapping("/book")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<AppointmentResponseDto> bookAppointment(@Valid @RequestBody AppointmentRequestDto request) {
         return ResponseEntity.ok(appointmentService.bookAppointment(request));
     }
@@ -35,15 +34,9 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getAppointmentById(id));
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/my-user-appointments")
-    public ResponseEntity<List<AppointmentResponseDto>> getAppointmentsForUser(){
-        return ResponseEntity.ok(appointmentService.getMyUserAppointments());
-    }
-
-    @PreAuthorize("hasRole('PROFESSIONAL')")
-    @GetMapping("/my-professional-appointments")
-    public ResponseEntity<List<AppointmentResponseDto>> getAppointmentsForProfessional(){
-        return ResponseEntity.ok(appointmentService.getMyProfessionalAppointments());
+    @PreAuthorize("hasAnyRole('USER', 'PROFESSIONAL', 'ADMIN')")
+    @GetMapping("/my")
+    public ResponseEntity<List<AppointmentResponseDto>> getMyAppointments() {
+        return ResponseEntity.ok(appointmentService.getMyAppointments());
     }
 }

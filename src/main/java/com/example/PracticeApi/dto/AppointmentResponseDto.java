@@ -13,11 +13,25 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AppointmentResponseDto {
+
     private Long appointmentId;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "d MMMM yyyy")
     private LocalDate date;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime startTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime endTime;
+
     private String message;
+
     private AppointmentStatus appointmentStatus;
+
+    private Long professionalId;
+    private String professionalName;
+
+    private Long userId;
+    private String userName;
 }

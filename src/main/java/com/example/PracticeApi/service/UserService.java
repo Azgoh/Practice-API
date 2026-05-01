@@ -43,17 +43,17 @@ public class UserService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEnabled(false);
+        user.setEnabled(true);
         user.setRole(Role.USER);
         user.setAuthProvider(AuthProvider.LOCAL);
 
-        String token = UUID.randomUUID().toString();
-        user.setVerificationToken(token);
+//        String token = UUID.randomUUID().toString();
+//        user.setVerificationToken(token);
         userRepository.save(user);
 
-        String confirmationUrl = "http://localhost:8080/api/verify-email?token=" + token;
-        emailService.sendEmail(user.getEmail(), "Email Verification", "Click the " +
-                "link to verify your email: " + confirmationUrl);
+//        String confirmationUrl = "http://localhost:8080/api/verify-email?token=" + token;
+//        emailService.sendEmail(user.getEmail(), "Email Verification", "Click the " +
+//                "link to verify your email: " + confirmationUrl);
     }
 
     public String validateVerificationToken(String token) {

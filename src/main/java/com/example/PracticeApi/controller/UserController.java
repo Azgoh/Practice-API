@@ -42,7 +42,7 @@ public class UserController {
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> register(@Valid @RequestBody RegisterRequestDto request) {
         userService.registerUser(request);
-        return ResponseEntity.ok("Registration successful. Please check your email to verify your account.");
+        return ResponseEntity.ok("Registration successful.");
     }
 
     @Operation(summary = "User email verification")
